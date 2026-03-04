@@ -1,6 +1,8 @@
 // Last Thursday // Project Detail Page
 // Shows a single project with all its info, edit/delete/approve buttons
 
+export const dynamic = "force-dynamic"
+
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { getProject } from "@/lib/db"

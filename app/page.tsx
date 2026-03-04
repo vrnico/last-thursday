@@ -1,6 +1,8 @@
 // Last Thursday // Home Page
 // Shows the project grid // server component for fast loading
 
+export const dynamic = "force-dynamic"
+
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { getPublishedProjects, getAllProjects, getUserDrafts } from "@/lib/db"

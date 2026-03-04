@@ -1,6 +1,8 @@
 // Last Thursday // Edit Project Page
 // Pre-populates the form with existing project data
 
+export const dynamic = "force-dynamic"
+
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { getProject } from "@/lib/db"
