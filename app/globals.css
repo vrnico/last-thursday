@@ -499,6 +499,16 @@ main {
   color: var(--text-secondary);
 }
 
+.readme-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
 .text-muted {
   color: var(--text-muted);
 }

@@ -38,3 +38,5 @@ out/
 
 # Next.js
 next-env.d.ts
+.vercel
+.env*.local

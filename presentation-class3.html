@@ -731,12 +731,24 @@
         <div class="indent"><span class="dir">app/</span></div>
         <div class="indent2"><span class="highlight">layout.tsx</span> <span style="color:#555;">// wraps every page, holds providers</span></div>
         <div class="indent2"><span class="highlight">page.tsx</span> <span style="color:#555;">// home page // project grid</span></div>
+        <div class="indent2"><span class="file">providers.tsx</span> <span style="color:#555;">// session context wrapper</span></div>
+        <div class="indent2"><span class="file">globals.css</span> <span style="color:#555;">// dark theme styles</span></div>
         <div class="indent2"><span class="dir">api/</span></div>
-        <div class="indent3"><span class="dir">auth/[...nextauth]/</span> <span style="color:#555;">// GitHub OAuth lives here</span></div>
-        <div class="indent3"><span class="dir">projects/</span> <span style="color:#555;">// CRUD endpoints</span></div>
+        <div class="indent3"><span class="dir">auth/[...nextauth]/</span><span class="file">route.ts</span> <span style="color:#555;">// GitHub OAuth</span></div>
+        <div class="indent3"><span class="dir">projects/</span><span class="file">route.ts</span> <span style="color:#555;">// GET all, POST new</span></div>
+        <div class="indent3"><span class="dir">projects/[id]/</span><span class="file">route.ts</span> <span style="color:#555;">// GET, PUT, DELETE one</span></div>
         <div class="indent2"><span class="dir">projects/</span></div>
         <div class="indent3"><span class="file">[id]/page.tsx</span> <span style="color:#555;">// single project view</span></div>
+        <div class="indent3"><span class="file">[id]/edit/page.tsx</span> <span style="color:#555;">// edit form</span></div>
         <div class="indent3"><span class="file">new/page.tsx</span> <span style="color:#555;">// create form</span></div>
+        <div class="indent"><span class="dir">lib/</span></div>
+        <div class="indent2"><span class="highlight">auth.ts</span> <span style="color:#555;">// Auth.js config + callbacks</span></div>
+        <div class="indent2"><span class="highlight">db.ts</span> <span style="color:#555;">// all SQL queries</span></div>
+        <div class="indent2"><span class="highlight">permissions.ts</span> <span style="color:#555;">// role checks</span></div>
+        <div class="indent"><span class="dir">components/</span></div>
+        <div class="indent2"><span class="file">Header.tsx</span> <span style="color:#555;">// nav + sign in/out</span></div>
+        <div class="indent2"><span class="file">ProjectCard.tsx</span> <span style="color:#555;">// card in the grid</span></div>
+        <div class="indent2"><span class="file">ProjectForm.tsx</span> <span style="color:#555;">// shared create/edit form</span></div>
         <div class="indent"><span class="highlight">.env.local</span> <span style="color:#555;">// secrets // never committed</span></div>
         <div class="indent"><span class="file">.gitignore</span> <span style="color:#555;">// keeps .env.local out of git</span></div>
       </div>
@@ -761,18 +773,27 @@
       </div>
       <div class="code-block"><span class="file-label">app/api/auth/[...nextauth]/route.ts</span>
 <span class="keyword">import</span> NextAuth <span class="keyword">from</span> <span class="string">"next-auth"</span>
-<span class="keyword">import</span> GitHub <span class="keyword">from</span> <span class="string">"next-auth/providers/github"</span>
+<span class="keyword">import</span> { authOptions } <span class="keyword">from</span> <span class="string">"@/lib/auth"</span>
 
-<span class="keyword">const</span> handler = <span class="fn">NextAuth</span>({
+<span class="keyword">const</span> handler = <span class="fn">NextAuth</span>(authOptions)
+
+<span class="keyword">export</span> { handler <span class="keyword">as</span> GET, handler <span class="keyword">as</span> POST }</div>
+      <div class="code-block"><span class="file-label">lib/auth.ts // the config</span>
+<span class="keyword">import</span> GitHubProvider <span class="keyword">from</span> <span class="string">"next-auth/providers/github"</span>
+
+<span class="keyword">export const</span> authOptions = {
   providers: [
-    <span class="fn">GitHub</span>({
+    <span class="fn">GitHubProvider</span>({
       clientId: process.env.<span class="type">GITHUB_ID</span>,
       clientSecret: process.env.<span class="type">GITHUB_SECRET</span>,
     }),
   ],
-})
-
-<span class="keyword">export</span> { handler <span class="keyword">as</span> GET, handler <span class="keyword">as</span> POST }</div>
+  callbacks: {
+    <span class="comment">// signIn: upsert user in our database</span>
+    <span class="comment">// jwt: store github_id in token</span>
+    <span class="comment">// session: attach db user (id, role) to session</span>
+  },
+}</div>
     </div>
   </div>
 
@@ -816,19 +837,22 @@
     <div class="content-box">
       <div class="code-block"><span class="file-label">app/api/projects/route.ts</span>
 <span class="comment">// CREATE // POST /api/projects</span>
-<span class="keyword">export async function</span> <span class="fn">POST</span>(req) {
-  <span class="keyword">const</span> session = <span class="keyword">await</span> <span class="fn">getServerSession</span>()
-  <span class="keyword">if</span> (!session) <span class="keyword">return</span> <span class="fn">Response</span>.<span class="fn">json</span>({ error: <span class="string">"Not logged in"</span> }, { status: <span class="type">401</span> })
+<span class="keyword">export async function</span> <span class="fn">POST</span>(req: NextRequest) {
+  <span class="keyword">const</span> session = <span class="keyword">await</span> <span class="fn">getServerSession</span>(authOptions)
+  <span class="keyword">const</span> user = (session?.user <span class="keyword">as</span> any) || <span class="keyword">null</span>
+  <span class="keyword">if</span> (!user) <span class="keyword">return</span> <span class="fn">NextResponse</span>.<span class="fn">json</span>({ error: <span class="string">"Not logged in"</span> }, { status: <span class="type">401</span> })
 
-  <span class="keyword">const</span> { title, description, week } = <span class="keyword">await</span> req.<span class="fn">json</span>()
+  <span class="keyword">const</span> body = <span class="keyword">await</span> req.<span class="fn">json</span>()
 
-  <span class="keyword">const</span> result = <span class="keyword">await</span> <span class="fn">sql</span><span class="string">`
-    INSERT INTO projects (title, description, week, author_id, status)
-    VALUES (${title}, ${description}, ${week}, ${session.user.id}, 'draft')
-    RETURNING *
-  `</span>
+  <span class="keyword">const</span> project = <span class="keyword">await</span> <span class="fn">createProject</span>({
+    title: body.title,
+    description: body.description,
+    week: body.week,
+    tags: body.tags || [],
+    author_id: user.id,
+  })
 
-  <span class="keyword">return</span> <span class="fn">Response</span>.<span class="fn">json</span>(result.rows[<span class="type">0</span>])
+  <span class="keyword">return</span> <span class="fn">NextResponse</span>.<span class="fn">json</span>(project, { status: <span class="type">201</span> })
 }</div>
     </div>
   </div>
@@ -846,14 +870,20 @@
           <li><strong>One line of code</strong> separates these roles. It's just a column in the users table. No magic. No special framework.</li>
         </ul>
       </div>
-      <div class="code-block"><span class="file-label">middleware check</span>
-<span class="keyword">function</span> <span class="fn">canEditProject</span>(user, project) {
+      <div class="code-block"><span class="file-label">lib/permissions.ts</span>
+<span class="keyword">export function</span> <span class="fn">canEditProject</span>(user, project) {
   <span class="keyword">if</span> (user.role === <span class="string">"moderator"</span>) <span class="keyword">return true</span>
   <span class="keyword">return</span> user.id === project.author_id
 }
 
-<span class="keyword">function</span> <span class="fn">canApprove</span>(user) {
+<span class="keyword">export function</span> <span class="fn">canApprove</span>(user) {
   <span class="keyword">return</span> user.role === <span class="string">"moderator"</span>
+}
+
+<span class="keyword">export function</span> <span class="fn">canViewProject</span>(user, project) {
+  <span class="keyword">if</span> (project.status === <span class="string">"published"</span>) <span class="keyword">return true</span>
+  <span class="keyword">if</span> (!user) <span class="keyword">return false</span>
+  <span class="keyword">return</span> user.role === <span class="string">"moderator"</span> || user.id === project.author_id
 }</div>
     </div>
   </div>

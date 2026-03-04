@@ -45,13 +45,23 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // Validate URLs // only allow http:// and https://
+  const demoUrl = body.demo_url || ""
+  const repoUrl = body.repo_url || ""
+  if (demoUrl && !/^https?:\/\//i.test(demoUrl)) {
+    return NextResponse.json({ error: "Demo URL must start with http:// or https://" }, { status: 400 })
+  }
+  if (repoUrl && !/^https?:\/\//i.test(repoUrl)) {
+    return NextResponse.json({ error: "Repo URL must start with http:// or https://" }, { status: 400 })
+  }
+
   const project = await createProject({
     title: body.title,
     description: body.description,
     week: body.week,
     tags: body.tags || [],
-    demo_url: body.demo_url || "",
-    repo_url: body.repo_url || "",
+    demo_url: demoUrl,
+    repo_url: repoUrl,
     readme: body.readme || "",
     author_id: user.id,
   })

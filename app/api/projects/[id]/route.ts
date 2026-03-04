@@ -60,7 +60,21 @@ export async function PUT(req: NextRequest, { params }: Params) {
     return NextResponse.json({ error: "You can only edit your own projects" }, { status: 403 })
   }
 
-  const updated = await updateProject(id, body)
+  // Validate URLs if provided
+  if (body.demo_url && !/^https?:\/\//i.test(body.demo_url)) {
+    return NextResponse.json({ error: "Demo URL must start with http:// or https://" }, { status: 400 })
+  }
+  if (body.repo_url && !/^https?:\/\//i.test(body.repo_url)) {
+    return NextResponse.json({ error: "Repo URL must start with http:// or https://" }, { status: 400 })
+  }
+
+  // Whitelist allowed fields
+  const allowed: any = {}
+  for (const key of ["title", "description", "week", "tags", "demo_url", "repo_url", "readme", "status"]) {
+    if (body[key] !== undefined) allowed[key] = body[key]
+  }
+
+  const updated = await updateProject(id, allowed)
   return NextResponse.json(updated)
 }
 

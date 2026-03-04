@@ -62,7 +62,7 @@ export default async function ProjectDetailPage({ params }: Props) {
         {project.readme ? (
           <div className="readme-content">
             <h3>README</h3>
-            <div dangerouslySetInnerHTML={{ __html: project.readme }} />
+            <pre className="readme-text">{project.readme}</pre>
           </div>
         ) : (
           <div className="readme-content">
@@ -82,7 +82,7 @@ export default async function ProjectDetailPage({ params }: Props) {
             </div>
           )}
 
-          {project.demo_url && (
+          {project.demo_url && /^https?:\/\//i.test(project.demo_url) && (
             <div className="sidebar-section">
               <h4>Demo</h4>
               <a href={project.demo_url} target="_blank" rel="noopener noreferrer" className="sidebar-link">
@@ -91,7 +91,7 @@ export default async function ProjectDetailPage({ params }: Props) {
             </div>
           )}
 
-          {project.repo_url && (
+          {project.repo_url && /^https?:\/\//i.test(project.repo_url) && (
             <div className="sidebar-section">
               <h4>Repository</h4>
               <a href={project.repo_url} target="_blank" rel="noopener noreferrer" className="sidebar-link">
