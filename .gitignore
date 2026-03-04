@@ -1,0 +1,39 @@
+# Environment variables and secrets
+.env
+.env.local
+.env.production
+.env.*.local
+
+# API keys and credentials
+*.key
+*.pem
+credentials.json
+secrets.json
+
+# Presentation (generated separately)
+presentation.html
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build output
+dist/
+build/
+.next/
+out/
+
+# Next.js
+next-env.d.ts

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Last Thursday // Multiverse Schools</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="#" class="logo" id="home-link">
+                <span class="logo-icon">&#9670;</span>
+                <h1>Last Thursday</h1>
+            </a>
+            <p class="tagline">Multiverse Schools // Learn to Code // Project Archive</p>
+        </div>
+    </header>
+
+    <main id="app">
+        <!-- Landing: Project Grid -->
+        <section id="project-grid" class="view active">
+            <div class="grid-header">
+                <h2>Projects</h2>
+                <p>Everything we've built, week by week.</p>
+            </div>
+            <div id="cards-container" class="cards-container">
+                <!-- Project cards rendered by JS -->
+            </div>
+        </section>
+
+        <!-- Detail: Single Project View -->
+        <section id="project-detail" class="view">
+            <nav class="detail-nav">
+                <button id="back-btn" class="back-btn">&larr; All Projects</button>
+            </nav>
+
+            <div class="detail-header" id="detail-header">
+                <!-- Populated by JS -->
+            </div>
+
+            <div class="detail-tabs">
+                <button class="tab active" data-tab="overview">Overview</button>
+                <button class="tab" data-tab="demo">Demo</button>
+                <button class="tab" data-tab="videos">Videos</button>
+                <button class="tab" data-tab="resources">Resources</button>
+            </div>
+
+            <div class="tab-panels">
+                <div id="panel-overview" class="tab-panel active">
+                    <!-- README / description content -->
+                </div>
+                <div id="panel-demo" class="tab-panel">
+                    <!-- Embedded demo or message -->
+                </div>
+                <div id="panel-videos" class="tab-panel">
+                    <!-- YouTube embeds -->
+                </div>
+                <div id="panel-resources" class="tab-panel">
+                    <!-- Links, docs, etc -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Multiverse Schools &middot; Learn to Code &middot; 2026</p>
+    </footer>
+
+    <script src="js/projects.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

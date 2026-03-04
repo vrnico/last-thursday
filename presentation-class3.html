@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn to Code - Week 4 // Class 3</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-dark: #0a0a1a;
+    --accent-cyan: #00d4ff;
+    --accent-pink: #ff006e;
+    --accent-yellow: #ffd60a;
+    --accent-green: #00e676;
+    --accent-orange: #ff6b35;
+    --accent-red: #ff2d2d;
+    --accent-purple: #b388ff;
+    --text-primary: #f0f0f0;
+    --text-secondary: #a0a0b8;
+    --notes-bg: #111128;
+    --notes-width: 420px;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ===================== PRESENTATION CONTAINER ===================== */
+  .presentation {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    transition: width 0.3s ease;
+  }
+
+  .presentation.notes-open {
+    width: calc(100vw - var(--notes-width));
+  }
+
+  /* ===================== SLIDES ===================== */
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+  }
+
+  .slide.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 0;
+  }
+
+  .slide > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Slide background overlays */
+  .slide::before { background: rgba(10,10,26,0.88); }
+  .slide-1::before { background: linear-gradient(135deg, rgba(10,10,26,0.82), rgba(0,212,255,0.18)); }
+  .slide-2::before { background: linear-gradient(135deg, rgba(10,10,26,0.84), rgba(255,0,110,0.16)); }
+  .slide-3::before { background: linear-gradient(135deg, rgba(10,10,26,0.84), rgba(0,230,118,0.16)); }
+  .slide-4::before { background: linear-gradient(135deg, rgba(10,10,26,0.82), rgba(179,136,255,0.20)); }
+  .slide-5::before { background: linear-gradient(135deg, rgba(10,10,26,0.84), rgba(0,212,255,0.18)); }
+  .slide-6::before { background: linear-gradient(135deg, rgba(10,10,26,0.84), rgba(255,214,10,0.16)); }
+  .slide-7::before { background: linear-gradient(135deg, rgba(10,10,26,0.84), rgba(255,107,53,0.18)); }
+  .slide-8::before { background: linear-gradient(135deg, rgba(10,10,26,0.84), rgba(0,230,118,0.16)); }
+  .slide-9::before { background: linear-gradient(135deg, rgba(10,10,26,0.82), rgba(255,0,110,0.20)); }
+  .slide-10::before { background: linear-gradient(135deg, rgba(10,10,26,0.80), rgba(0,212,255,0.22)); }
+
+  /* ===================== CONTENT BOX ===================== */
+  .content-box {
+    background: rgba(10, 10, 26, 0.82);
+    border-radius: 16px;
+    padding: 32px 40px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.06);
+    width: 100%;
+    max-width: 960px;
+  }
+
+  .content-box-tight {
+    background: rgba(10, 10, 26, 0.82);
+    border-radius: 12px;
+    padding: 20px 28px;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  /* ===================== TYPOGRAPHY ===================== */
+  .slide-title {
+    font-size: 3.2rem;
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+  }
+
+  .slide-subtitle {
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  }
+
+  .accent-cyan { color: var(--accent-cyan); }
+  .accent-pink { color: var(--accent-pink); }
+  .accent-yellow { color: var(--accent-yellow); }
+  .accent-green { color: var(--accent-green); }
+  .accent-orange { color: var(--accent-orange); }
+  .accent-red { color: var(--accent-red); }
+  .accent-purple { color: var(--accent-purple); }
+
+  .slide-content {
+    max-width: 900px;
+    width: 100%;
+  }
+
+  .slide-content ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .slide-content ul li {
+    font-size: 1.35rem;
+    line-height: 1.6;
+    padding: 12px 0 12px 36px;
+    position: relative;
+    font-weight: 400;
+  }
+
+  .slide-content ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 22px;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    background: var(--accent-cyan);
+  }
+
+  .slide-content ul.pink li::before { background: var(--accent-pink); }
+  .slide-content ul.yellow li::before { background: var(--accent-yellow); }
+  .slide-content ul.green li::before { background: var(--accent-green); }
+  .slide-content ul.orange li::before { background: var(--accent-orange); }
+  .slide-content ul.red li::before { background: var(--accent-red); }
+  .slide-content ul.purple li::before { background: var(--accent-purple); }
+
+  .tag {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .tag-cyan { background: rgba(0,212,255,0.15); color: var(--accent-cyan); border: 1px solid rgba(0,212,255,0.3); }
+  .tag-pink { background: rgba(255,0,110,0.15); color: var(--accent-pink); border: 1px solid rgba(255,0,110,0.3); }
+  .tag-yellow { background: rgba(255,214,10,0.15); color: var(--accent-yellow); border: 1px solid rgba(255,214,10,0.3); }
+  .tag-green { background: rgba(0,230,118,0.15); color: var(--accent-green); border: 1px solid rgba(0,230,118,0.3); }
+  .tag-orange { background: rgba(255,107,53,0.15); color: var(--accent-orange); border: 1px solid rgba(255,107,53,0.3); }
+  .tag-red { background: rgba(255,45,45,0.15); color: var(--accent-red); border: 1px solid rgba(255,45,45,0.3); }
+  .tag-purple { background: rgba(179,136,255,0.15); color: var(--accent-purple); border: 1px solid rgba(179,136,255,0.3); }
+
+  .quote-block {
+    font-size: 1.6rem;
+    font-weight: 300;
+    font-style: italic;
+    border-left: 4px solid var(--accent-pink);
+    padding: 16px 0 16px 28px;
+    margin: 20px 0;
+    color: var(--text-secondary);
+    max-width: 800px;
+  }
+
+  .quote-block .source {
+    display: block;
+    font-size: 1rem;
+    font-style: normal;
+    color: var(--accent-pink);
+    margin-top: 8px;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  .col-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 32px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .col-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+  }
+
+  /* ===================== CODE BLOCKS ===================== */
+  .code-block {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 20px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin: 16px 0;
+    white-space: pre;
+    color: var(--text-secondary);
+  }
+
+  .code-block .keyword { color: var(--accent-pink); }
+  .code-block .string { color: var(--accent-green); }
+  .code-block .comment { color: #555; font-style: italic; }
+  .code-block .fn { color: var(--accent-cyan); }
+  .code-block .type { color: var(--accent-yellow); }
+  .code-block .file-label {
+    display: block;
+    color: var(--accent-purple);
+    font-size: 0.75rem;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ===================== BREAKPOINT BADGE ===================== */
+  .breakpoint-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    background: rgba(255,45,45,0.15);
+    color: var(--accent-red);
+    border: 1px solid rgba(255,45,45,0.3);
+  }
+
+  .breakpoint-badge::before {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent-red);
+    box-shadow: 0 0 8px rgba(255,45,45,0.6);
+  }
+
+  /* ===================== FLOW DIAGRAM ===================== */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+
+  .flow-box {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 14px 22px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    text-align: center;
+  }
+
+  .flow-arrow {
+    font-size: 1.4rem;
+    color: var(--text-secondary);
+  }
+
+  /* ===================== STACK CARD ===================== */
+  .stack-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .stack-item {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .stack-item h4 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .stack-item p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ===================== FILE TREE ===================== */
+  .file-tree {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 2;
+    color: var(--text-secondary);
+    padding: 16px 0;
+  }
+
+  .file-tree .dir { color: var(--accent-cyan); font-weight: 700; }
+  .file-tree .file { color: var(--text-secondary); }
+  .file-tree .highlight { color: var(--accent-green); font-weight: 700; }
+  .file-tree .indent { padding-left: 24px; }
+  .file-tree .indent2 { padding-left: 48px; }
+  .file-tree .indent3 { padding-left: 72px; }
+
+  /* ===================== SCHEMA TABLE ===================== */
+  .schema-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    margin: 12px 0;
+  }
+
+  .schema-table th {
+    text-align: left;
+    padding: 8px 12px;
+    color: var(--accent-cyan);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.7rem;
+  }
+
+  .schema-table td {
+    padding: 6px 12px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .schema-table td:first-child { color: var(--text-primary); }
+
+  /* ===================== NAVIGATION ===================== */
+  .nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: rgba(10,10,26,0.95);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    transition: right 0.3s ease;
+  }
+
+  .nav-bar.notes-open {
+    right: var(--notes-width);
+  }
+
+  .nav-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-primary);
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transition: all 0.2s;
+  }
+
+  .nav-btn:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  .slide-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .slide-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+  }
+
+  .slide-dot.active {
+    background: var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(0,212,255,0.5);
+    transform: scale(1.3);
+  }
+
+  .slide-dot:hover {
+    background: rgba(255,255,255,0.4);
+  }
+
+  .slide-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-pink));
+    transition: width 0.4s ease;
+    z-index: 101;
+  }
+
+  /* ===================== NOTES TOGGLE ===================== */
+  .notes-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-secondary);
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    z-index: 200;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .notes-toggle:hover {
+    background: rgba(255,255,255,0.12);
+    color: var(--text-primary);
+  }
+
+  .notes-toggle.active {
+    background: rgba(0,212,255,0.15);
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+    right: calc(var(--notes-width) + 16px);
+  }
+
+  /* ===================== NOTES PANEL ===================== */
+  .notes-panel {
+    position: fixed;
+    top: 0;
+    right: calc(-1 * var(--notes-width));
+    width: var(--notes-width);
+    height: 100vh;
+    background: var(--notes-bg);
+    border-left: 1px solid rgba(255,255,255,0.08);
+    z-index: 150;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+    padding: 24px;
+  }
+
+  .notes-panel.open {
+    right: 0;
+  }
+
+  .notes-panel h2 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent-cyan);
+    margin-bottom: 6px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .notes-panel h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .notes-section {
+    display: none;
+  }
+
+  .notes-section.active {
+    display: block;
+  }
+
+  .notes-section p {
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+  }
+
+  .notes-section .talk-point {
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid var(--accent-cyan);
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 10px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  .notes-section .talk-point strong {
+    color: var(--text-primary);
+  }
+
+  .notes-section .talk-point code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    background: rgba(0,0,0,0.3);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--accent-green);
+  }
+
+  .notes-section .cue {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent-pink);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 16px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .notes-section .cue::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-pink);
+  }
+
+  .notes-section .time-est {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    background: rgba(255,214,10,0.1);
+    color: var(--accent-yellow);
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 16px;
+  }
+
+  /* ===================== KEYBOARD HINT ===================== */
+  .keyboard-hint {
+    position: fixed;
+    bottom: 70px;
+    right: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.2);
+    text-align: right;
+    z-index: 99;
+    transition: right 0.3s ease;
+  }
+
+  .keyboard-hint.notes-open {
+    right: calc(var(--notes-width) + 16px);
+  }
+
+  .keyboard-hint kbd {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin: 0 2px;
+  }
+
+  /* ===================== RESPONSIVE ===================== */
+  @media (max-width: 900px) {
+    .slide { padding: 40px 32px; }
+    .slide-title { font-size: 2.2rem; }
+    .slide-subtitle { font-size: 1.2rem; }
+    .slide-content ul li { font-size: 1.1rem; }
+    .two-col { grid-template-columns: 1fr; gap: 20px; }
+    .stack-grid { grid-template-columns: 1fr; }
+    .quote-block { font-size: 1.3rem; }
+    .content-box { padding: 20px 24px; }
+    .code-block { font-size: 0.75rem; padding: 14px 16px; }
+    :root { --notes-width: 320px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Progress bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Notes toggle button -->
+<button class="notes-toggle" id="notesToggle" onclick="toggleNotes()">
+  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+  THEMULTIVERSE.SCHOOL
+</button>
+
+<!-- ===================== SLIDES ===================== -->
+<div class="presentation" id="presentation">
+
+  <!-- SLIDE 1: Title -->
+  <div class="slide slide-1 active" style="background-image: url('https://images.pexels.com/photos/1181271/pexels-photo-1181271.jpeg?auto=compress&cs=tinysrgb&w=1920');">
+    <div class="content-box-tight" style="text-align: center;">
+      <span class="tag tag-cyan">Week 4 &middot; Class 3 &middot; March 4, 2026</span>
+      <h1 class="slide-title">Last Thursday<br><span class="accent-cyan">Goes Full Stack</span></h1>
+      <p class="slide-subtitle">GitHub login // database // CRUD // moderators // deploy</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: The Vision -->
+  <div class="slide slide-2" style="background-image: url('https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1920');">
+    <span class="tag tag-pink">The Vision</span>
+    <h1 class="slide-title">Static Site <span class="accent-pink">&rarr;</span> Full App</h1>
+    <div class="content-box">
+      <div class="slide-content">
+        <ul class="pink">
+          <li><strong>What we have:</strong> a static HTML/CSS/JS page with hardcoded project data. It looks nice, but nobody can change it without editing code.</li>
+          <li><strong>What we're building:</strong> a real app where you log in with GitHub, create project entries, edit them, delete them // and moderators approve what goes live.</li>
+          <li><strong>Why GitHub login?</strong> You all have GitHub accounts. No passwords to manage. No email verification to build. GitHub handles all of that for us.</li>
+          <li><strong>Format today:</strong> the app is already built. We're going to walk through it at <strong>breakpoints</strong> // stop, read the code, understand what it does, then move on.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: The Stack -->
+  <div class="slide slide-3" style="background-image: url('https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=1920');">
+    <span class="tag tag-green">The Stack</span>
+    <h1 class="slide-title">Four Pieces, <span class="accent-green">That's It</span></h1>
+    <div class="content-box">
+      <div class="stack-grid">
+        <div class="stack-item">
+          <h4 class="accent-cyan">Next.js</h4>
+          <p>React framework. Gives us pages, API routes, and server-side rendering. One command to create a project.</p>
+        </div>
+        <div class="stack-item">
+          <h4 class="accent-green">Auth.js</h4>
+          <p>Handles GitHub OAuth. Three files and you have login/logout. No passwords, no sessions to manage manually.</p>
+        </div>
+        <div class="stack-item">
+          <h4 class="accent-yellow">Vercel Postgres</h4>
+          <p>SQL database in the cloud. Free tier. Create tables, store projects, query data. Real SQL, not a toy.</p>
+        </div>
+        <div class="stack-item">
+          <h4 class="accent-pink">Vercel</h4>
+          <p>Deploy with <code style="font-family: 'JetBrains Mono'; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">git push</code>. Env vars stay on the server. Your secrets never hit the browser.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Breakpoint // Project Structure -->
+  <div class="slide slide-4" style="background-image: url('https://images.pexels.com/photos/1089438/pexels-photo-1089438.jpeg?auto=compress&cs=tinysrgb&w=1920');">
+    <div class="breakpoint-badge">BREAKPOINT 1</div>
+    <h1 class="slide-title">Project <span class="accent-purple">Structure</span></h1>
+    <div class="content-box">
+      <div class="file-tree">
+        <div><span class="dir">last-thursday/</span></div>
+        <div class="indent"><span class="dir">app/</span></div>
+        <div class="indent2"><span class="highlight">layout.tsx</span> <span style="color:#555;">// wraps every page, holds providers</span></div>
+        <div class="indent2"><span class="highlight">page.tsx</span> <span style="color:#555;">// home page // project grid</span></div>
+        <div class="indent2"><span class="dir">api/</span></div>
+        <div class="indent3"><span class="dir">auth/[...nextauth]/</span> <span style="color:#555;">// GitHub OAuth lives here</span></div>
+        <div class="indent3"><span class="dir">projects/</span> <span style="color:#555;">// CRUD endpoints</span></div>
+        <div class="indent2"><span class="dir">projects/</span></div>
+        <div class="indent3"><span class="file">[id]/page.tsx</span> <span style="color:#555;">// single project view</span></div>
+        <div class="indent3"><span class="file">new/page.tsx</span> <span style="color:#555;">// create form</span></div>
+        <div class="indent"><span class="highlight">.env.local</span> <span style="color:#555;">// secrets // never committed</span></div>
+        <div class="indent"><span class="file">.gitignore</span> <span style="color:#555;">// keeps .env.local out of git</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Breakpoint // GitHub OAuth -->
+  <div class="slide slide-5" style="background-image: url('https://images.pexels.com/photos/2004161/pexels-photo-2004161.jpeg?auto=compress&cs=tinysrgb&w=1920');">
+    <div class="breakpoint-badge">BREAKPOINT 2</div>
+    <h1 class="slide-title">GitHub <span class="accent-cyan">OAuth</span></h1>
+    <div class="content-box">
+      <div class="flow-row">
+        <div class="flow-box"><span class="accent-cyan">User</span><br>clicks "Sign in"</div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-box"><span class="accent-green">GitHub</span><br>asks permission</div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-box"><span class="accent-yellow">GitHub</span><br>sends code back</div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-box"><span class="accent-pink">Our server</span><br>exchanges for token</div>
+        <div class="flow-arrow">&rarr;</div>
+        <div class="flow-box"><span class="accent-purple">Session</span><br>user is logged in</div>
+      </div>
+      <div class="code-block"><span class="file-label">app/api/auth/[...nextauth]/route.ts</span>
+<span class="keyword">import</span> NextAuth <span class="keyword">from</span> <span class="string">"next-auth"</span>
+<span class="keyword">import</span> GitHub <span class="keyword">from</span> <span class="string">"next-auth/providers/github"</span>
+
+<span class="keyword">const</span> handler = <span class="fn">NextAuth</span>({
+  providers: [
+    <span class="fn">GitHub</span>({
+      clientId: process.env.<span class="type">GITHUB_ID</span>,
+      clientSecret: process.env.<span class="type">GITHUB_SECRET</span>,
+    }),
+  ],
+})
+
+<span class="keyword">export</span> { handler <span class="keyword">as</span> GET, handler <span class="keyword">as</span> POST }</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Breakpoint // Database -->
+  <div class="slide slide-6" style="background-image: url('https://images.pexels.com/photos/1148820/pexels-photo-1148820.jpeg?auto=compress&cs=tinysrgb&w=1920');">
+    <div class="breakpoint-badge">BREAKPOINT 3</div>
+    <h1 class="slide-title">The <span class="accent-yellow">Database</span></h1>
+    <div class="content-box">
+      <div class="two-col">
+        <div class="col-card">
+          <h3 class="accent-yellow">users</h3>
+          <table class="schema-table">
+            <tr><th>column</th><th>type</th></tr>
+            <tr><td>id</td><td>serial pk</td></tr>
+            <tr><td>github_id</td><td>text unique</td></tr>
+            <tr><td>username</td><td>text</td></tr>
+            <tr><td>avatar_url</td><td>text</td></tr>
+            <tr><td>role</td><td>text default 'user'</td></tr>
+          </table>
+        </div>
+        <div class="col-card">
+          <h3 class="accent-green">projects</h3>
+          <table class="schema-table">
+            <tr><th>column</th><th>type</th></tr>
+            <tr><td>id</td><td>serial pk</td></tr>
+            <tr><td>title</td><td>text</td></tr>
+            <tr><td>description</td><td>text</td></tr>
+            <tr><td>week</td><td>integer</td></tr>
+            <tr><td>author_id</td><td>fk &rarr; users</td></tr>
+            <tr><td>status</td><td>'draft' | 'published'</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Breakpoint // CRUD -->
+  <div class="slide slide-7" style="background-image: url('https://images.pexels.com/photos/1181298/pexels-photo-1181298.jpeg?auto=compress&cs=tinysrgb&w=1920');">
+    <div class="breakpoint-badge">BREAKPOINT 4</div>
+    <h1 class="slide-title"><span class="accent-orange">C</span>reate <span class="accent-orange">R</span>ead <span class="accent-orange">U</span>pdate <span class="accent-orange">D</span>elete</h1>
+    <div class="content-box">
+      <div class="code-block"><span class="file-label">app/api/projects/route.ts</span>
+<span class="comment">// CREATE // POST /api/projects</span>
+<span class="keyword">export async function</span> <span class="fn">POST</span>(req) {
+  <span class="keyword">const</span> session = <span class="keyword">await</span> <span class="fn">getServerSession</span>()
+  <span class="keyword">if</span> (!session) <span class="keyword">return</span> <span class="fn">Response</span>.<span class="fn">json</span>({ error: <span class="string">"Not logged in"</span> }, { status: <span class="type">401</span> })
+
+  <span class="keyword">const</span> { title, description, week } = <span class="keyword">await</span> req.<span class="fn">json</span>()
+
+  <span class="keyword">const</span> result = <span class="keyword">await</span> <span class="fn">sql</span><span class="string">`
+    INSERT INTO projects (title, description, week, author_id, status)
+    VALUES (${title}, ${description}, ${week}, ${session.user.id}, 'draft')
+    RETURNING *
+  `</span>
+
+  <span class="keyword">return</span> <span class="fn">Response</span>.<span class="fn">json</span>(result.rows[<span class="type">0</span>])
+}</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Breakpoint // Moderator System -->
+  <div class="slide slide-8" style="background-image: url('https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=1920');">
+    <div class="breakpoint-badge">BREAKPOINT 5</div>
+    <h1 class="slide-title">Roles &amp; <span class="accent-green">Moderation</span></h1>
+    <div class="content-box">
+      <div class="slide-content">
+        <ul class="green">
+          <li><strong>user</strong> // can create projects, edit/delete their own. New projects start as <code style="font-family: 'JetBrains Mono'; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px; color: var(--accent-yellow);">draft</code></li>
+          <li><strong>moderator</strong> // can approve drafts to <code style="font-family: 'JetBrains Mono'; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px; color: var(--accent-green);">published</code>, edit/delete any project</li>
+          <li><strong>The flow:</strong> user creates a project &rarr; it's a draft &rarr; mod reviews it &rarr; approves or sends feedback &rarr; it goes live on the site</li>
+          <li><strong>One line of code</strong> separates these roles. It's just a column in the users table. No magic. No special framework.</li>
+        </ul>
+      </div>
+      <div class="code-block"><span class="file-label">middleware check</span>
+<span class="keyword">function</span> <span class="fn">canEditProject</span>(user, project) {
+  <span class="keyword">if</span> (user.role === <span class="string">"moderator"</span>) <span class="keyword">return true</span>
+  <span class="keyword">return</span> user.id === project.author_id
+}
+
+<span class="keyword">function</span> <span class="fn">canApprove</span>(user) {
+  <span class="keyword">return</span> user.role === <span class="string">"moderator"</span>
+}</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Breakpoint // Deploy -->
+  <div class="slide slide-9" style="background-image: url('https://images.pexels.com/photos/1148820/pexels-photo-1148820.jpeg?auto=compress&cs=tinysrgb&w=1920');">
+    <div class="breakpoint-badge">BREAKPOINT 6</div>
+    <h1 class="slide-title">Deploy to <span class="accent-pink">Vercel</span></h1>
+    <div class="content-box">
+      <div class="slide-content">
+        <ul class="pink">
+          <li><strong>Push to GitHub</strong> // Vercel watches the repo. Every push triggers a new deploy. Automatic.</li>
+          <li><strong>Environment variables</strong> // <code style="font-family: 'JetBrains Mono'; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px; color: var(--accent-green);">GITHUB_ID</code>, <code style="font-family: 'JetBrains Mono'; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px; color: var(--accent-green);">GITHUB_SECRET</code>, <code style="font-family: 'JetBrains Mono'; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px; color: var(--accent-green);">POSTGRES_URL</code> go in the Vercel dashboard. They never touch your code. They never go in git.</li>
+          <li><strong>Why this matters:</strong> keys in code = keys in public. Vercel's env vars are encrypted, server-side only. Even if someone reads your GitHub repo, they can't get your secrets.</li>
+          <li><strong>Custom domain?</strong> One click in Vercel. Point a domain at it and you're live. Or use the free <code style="font-family: 'JetBrains Mono'; background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px; color: var(--accent-cyan);">.vercel.app</code> URL.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: Ship It -->
+  <div class="slide slide-10" style="background-image: url('https://images.pexels.com/photos/6591151/pexels-photo-6591151.jpeg?auto=compress&cs=tinysrgb&w=1920');">
+    <span class="tag tag-cyan">Ship It</span>
+    <h1 class="slide-title">It's <span class="accent-cyan">Thursday</span> Tomorrow</h1>
+    <div class="content-box">
+      <div class="slide-content">
+        <ul>
+          <li><strong>What we built today:</strong> a full-stack app with GitHub auth, a Postgres database, CRUD API routes, role-based moderation, and a Vercel deploy.</li>
+          <li><strong>What you learned:</strong> OAuth flow, SQL schema design, API endpoints, environment variables, server vs. client, role-based access control.</li>
+          <li><strong>What's different now:</strong> this isn't a static page anymore. It's a real app that real people can log into and use. You built that.</li>
+          <li><strong>Tomorrow:</strong> demo day. We polish, we present, we ship. Same energy as every Thursday. Working demo or it didn't happen.</li>
+        </ul>
+      </div>
+      <div class="quote-block" style="border-color: var(--accent-cyan);">
+        "Full stack means you understand the whole thing // from the button the user clicks to the row in the database."
+        <span class="source" style="color: var(--accent-cyan);">- This class, today</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== TEACHER COMPANION NOTES ===================== -->
+<div class="notes-panel" id="notesPanel">
+
+  <!-- Notes for Slide 1 -->
+  <div class="notes-section active" data-slide="0">
+    <h2>Companion Script</h2>
+    <h3>Slide 1: Last Thursday Goes Full Stack</h3>
+    <span class="time-est">~3 minutes</span>
+
+    <div class="talk-point"><strong>Set the vibe:</strong> Today is different. We're not doing a lecture. We're not doing slides-then-code. The app is already built. We're going to walk through it together, stopping at the important parts. Think of it like a guided tour of a building that's already standing // we're going to look at the foundation, the wiring, the plumbing.</div>
+
+    <div class="talk-point"><strong>Why this format:</strong> In a real job, you spend way more time reading code than writing it. Understanding someone else's code // or code you wrote last week and forgot about // is the actual skill. Today is practice at that.</div>
+
+    <div class="talk-point"><strong>The app:</strong> Last Thursday is becoming a real app. GitHub login. A database. Users can add, edit, and delete projects. Moderators can approve them. Deployed on Vercel. For free. No credit card, no server to manage.</div>
+
+    <p class="cue">Check: everyone have GitHub accounts?</p>
+    <div class="talk-point">Quick poll. "Raise your hand if you have a GitHub account." Everyone should from Week 1. If someone doesn't, pause and help them make one. They'll need it today.</div>
+  </div>
+
+  <!-- Notes for Slide 2 -->
+  <div class="notes-section" data-slide="1">
+    <h2>Companion Script</h2>
+    <h3>Slide 2: Static Site to Full App</h3>
+    <span class="time-est">~5 minutes</span>
+
+    <div class="talk-point"><strong>Show the old site:</strong> Pull up the existing static Last Thursday site. "This is what we had. HTML file, a CSS file, a JS file that has project data hardcoded in it. If I want to add a project, I open <code>projects.js</code>, type the data in by hand, and redeploy. That's not an app. That's a web page."</div>
+
+    <div class="talk-point"><strong>Show the new app:</strong> Pull up the deployed Vercel app. "Same idea, same dark theme, same project cards. But now there's a 'Sign in with GitHub' button in the corner. Click it." Demo the login flow live. "I'm logged in. My GitHub avatar is right there. And now I see a 'New Project' button. Because I'm authenticated // the app knows who I am."</div>
+
+    <div class="talk-point"><strong>The key concepts we're covering today:</strong> Authentication (who are you?), Authorization (what can you do?), CRUD (create/read/update/delete), Database (where does data live?), Environment variables (how do we keep secrets secret?). These are the building blocks of every app you use // Instagram, GitHub, Gmail. Same concepts. Different paint.</div>
+
+    <p class="cue">Ask the room</p>
+    <div class="talk-point">"What's the difference between a web page and a web app?" Let people try to answer. The key distinction: a web page shows the same thing to everyone. A web app knows who you are and shows you different things based on that. That's what authentication enables.</div>
+  </div>
+
+  <!-- Notes for Slide 3 -->
+  <div class="notes-section" data-slide="2">
+    <h2>Companion Script</h2>
+    <h3>Slide 3: The Stack</h3>
+    <span class="time-est">~5 minutes</span>
+
+    <div class="talk-point"><strong>Keep it simple:</strong> "Four tools. That's the entire stack. Next.js gives us a React app with built-in API routes // meaning the frontend and backend live in the same project. Auth.js handles the GitHub login. Vercel Postgres is our database. And Vercel is where we deploy."</div>
+
+    <div class="talk-point"><strong>Why Next.js:</strong> "You could build this with plain HTML/CSS/JS. We did that with the static version. But the moment you need a server // for auth, for database queries, for keeping secrets // you need something that can run code on a server. Next.js gives you that without having to set up a separate backend. One project, one deploy."</div>
+
+    <div class="talk-point"><strong>Why Auth.js:</strong> "Building a login system from scratch is a bad idea. Not because it's hard // it's not that hard // but because there are a million ways to get it wrong. Session hijacking, CSRF, token expiry. Auth.js handles all of that. We configure it, we don't build it. That's a smart engineering decision, not a lazy one."</div>
+
+    <div class="talk-point"><strong>Why Vercel Postgres:</strong> "We need somewhere to store projects. Could use a JSON file, could use Firebase, could use MongoDB. We're using Postgres because it's real SQL // the same language used by every bank, hospital, and government database on earth. Learning SQL is never wasted time."</div>
+
+    <p class="cue">Analogy</p>
+    <div class="talk-point">"Think of it like building a restaurant. Next.js is the building. Auth.js is the door lock // it lets the right people in. Postgres is the kitchen // where the food (data) is prepared. Vercel is the neighborhood // where the building exists so people can find it."</div>
+  </div>
+
+  <!-- Notes for Slide 4 -->
+  <div class="notes-section" data-slide="3">
+    <h2>Companion Script</h2>
+    <h3>Breakpoint 1: Project Structure</h3>
+    <span class="time-est">~7 minutes</span>
+
+    <div class="talk-point"><strong>Open the project in VS Code:</strong> Show the actual file tree. "This is a Next.js project using the app router. Everything inside the <code>app/</code> folder becomes a route. <code>app/page.tsx</code> is the home page. <code>app/projects/[id]/page.tsx</code> is a dynamic route // the <code>[id]</code> part means it can be any project ID."</div>
+
+    <div class="talk-point"><strong>Explain the API folder:</strong> "The <code>app/api/</code> folder is where server-side code lives. This code never runs in the browser. When your frontend needs to create a project or check who's logged in, it makes a request to these API routes. They run on the server, they talk to the database, and they send back JSON."</div>
+
+    <div class="talk-point"><strong>The .env.local file:</strong> "This is the most important file in the project // and it's the one you never share. It contains your GitHub OAuth credentials, your database connection string, and your auth secret. It's listed in <code>.gitignore</code> so it never gets committed to GitHub. When we deploy to Vercel, these same values go into the Vercel dashboard as environment variables."</div>
+
+    <p class="cue">Live demo</p>
+    <div class="talk-point">Open <code>.env.local</code> in the editor. Show the structure (variable names only, obviously not the actual values). "See? <code>GITHUB_ID</code>, <code>GITHUB_SECRET</code>, <code>POSTGRES_URL</code>, <code>NEXTAUTH_SECRET</code>. Four environment variables. That's all the secrets this entire app needs."</div>
+
+    <div class="talk-point"><strong>Key lesson:</strong> "File structure IS architecture. How you organize your code tells you how the app works. If I look at this file tree and I've never seen this project before, I can already tell: it has auth, it has projects with CRUD, and it has a database. That's readable code."</div>
+  </div>
+
+  <!-- Notes for Slide 5 -->
+  <div class="notes-section" data-slide="4">
+    <h2>Companion Script</h2>
+    <h3>Breakpoint 2: GitHub OAuth</h3>
+    <span class="time-est">~10 minutes</span>
+
+    <div class="talk-point"><strong>Walk through the flow diagram:</strong> "OAuth is a dance between three parties. The user, GitHub, and our server. Step 1: user clicks 'Sign in.' Step 2: they get sent to GitHub's website. GitHub asks 'Do you want to give Last Thursday access to your profile?' Step 3: user says yes, GitHub sends a code back to our server. Step 4: our server takes that code and exchanges it for a real access token. Step 5: we have a session. The user is logged in."</div>
+
+    <div class="talk-point"><strong>Why this is better than passwords:</strong> "We never see the user's password. We never store a password. We never have to worry about someone hacking our database and getting passwords. GitHub handles all the authentication. We just get the result: 'This person is real, here's their username and avatar.'"</div>
+
+    <div class="talk-point"><strong>Show the code:</strong> Open the actual <code>route.ts</code> file. "Look how little code this is. We import NextAuth, import the GitHub provider, configure it with our client ID and secret, and export the handler. That's the entire auth system. Auth.js does the rest. The <code>[...nextauth]</code> folder name is a catch-all route // it handles <code>/api/auth/signin</code>, <code>/api/auth/signout</code>, <code>/api/auth/callback</code>, all from this one file."</div>
+
+    <p class="cue">Show the GitHub OAuth app setup</p>
+    <div class="talk-point">Open GitHub &rarr; Settings &rarr; Developer settings &rarr; OAuth Apps. "This is where you create the OAuth app. You give it a name, a homepage URL, and a callback URL. GitHub gives you a Client ID and Client Secret. Those go in your <code>.env.local</code>. That's the handshake // GitHub knows about your app, your app knows about GitHub."</div>
+
+    <div class="talk-point"><strong>Key concept // environment variables:</strong> "Notice the code says <code>process.env.GITHUB_ID</code>. It doesn't say the actual ID. The value comes from the environment // from <code>.env.local</code> locally, and from Vercel's dashboard in production. If someone reads our code on GitHub, they see the variable name but never the value. This is how every professional app handles secrets."</div>
+  </div>
+
+  <!-- Notes for Slide 6 -->
+  <div class="notes-section" data-slide="5">
+    <h2>Companion Script</h2>
+    <h3>Breakpoint 3: The Database</h3>
+    <span class="time-est">~8 minutes</span>
+
+    <div class="talk-point"><strong>What is a database:</strong> "A database is just organized storage. Think of it like a spreadsheet with rules. Each table is a sheet. Each row is a record. Each column is a field. The difference between a spreadsheet and a database is that a database enforces rules // this column must be unique, that column can't be empty, this row must reference a row in another table."</div>
+
+    <div class="talk-point"><strong>Walk through the schema:</strong> "We have two tables. <code>users</code> stores everyone who logs in via GitHub. ID, their GitHub ID, username, avatar URL, and a role column that defaults to 'user'. <code>projects</code> stores the project entries. Title, description, week number, who created it (linked to users via <code>author_id</code>), and a status field that's either 'draft' or 'published'."</div>
+
+    <div class="talk-point"><strong>The foreign key:</strong> "See <code>author_id</code> in the projects table? That's a foreign key. It references the <code>id</code> column in the users table. This is how we know who created each project. If I look up project #5, I can follow the <code>author_id</code> to find the user who made it. This is relational data // two tables linked by a shared value. That's why it's called a relational database."</div>
+
+    <p class="cue">Show the Vercel Postgres dashboard</p>
+    <div class="talk-point">Open the Vercel dashboard and navigate to the Postgres section. "This is where the database lives. You can run SQL queries right here in the browser. Let me run <code>SELECT * FROM users;</code> and show you what's in there." Run it live. Show the data. "That's real data. Real rows. Every time someone logs in with GitHub, a row appears here."</div>
+
+    <div class="talk-point"><strong>The draft/published pattern:</strong> "Notice the status column. New projects start as 'draft'. They don't show up on the public site until a moderator changes them to 'published'. This is a common pattern // it's how WordPress works, how news sites work, how any CMS works. You've been using this pattern every time you read an article online. Now you know how it works underneath."</div>
+  </div>
+
+  <!-- Notes for Slide 7 -->
+  <div class="notes-section" data-slide="6">
+    <h2>Companion Script</h2>
+    <h3>Breakpoint 4: CRUD</h3>
+    <span class="time-est">~8 minutes</span>
+
+    <div class="talk-point"><strong>What is CRUD:</strong> "CRUD stands for Create, Read, Update, Delete. These are the four things you can do with data. Every app you've ever used is CRUD. Twitter? You create tweets, read tweets, edit tweets (now), delete tweets. Instagram? Create posts, read posts, edit captions, delete posts. Email? Create, read, update (drafts), delete. It's all CRUD."</div>
+
+    <div class="talk-point"><strong>Walk through the POST route:</strong> "Let's read this code line by line. First: <code>getServerSession()</code>. This checks if the person making the request is logged in. If not, we return a 401 error // 'Not logged in.' This is authorization. You must be authenticated to create a project."</div>
+
+    <div class="talk-point"><strong>The SQL:</strong> "Next: <code>sql\`INSERT INTO projects...\`</code>. This is a SQL query that creates a new row in the projects table. We take the title, description, and week from the request body, set the author to the logged-in user, and set the status to 'draft'. The <code>RETURNING *</code> at the end means 'give me back the row you just created' so we can send it to the client."</div>
+
+    <p class="cue">Live demo // create a project</p>
+    <div class="talk-point">Open the app in the browser. Log in. Click 'New Project'. Fill in a title and description. Submit it. "Watch what happens. The form sends a POST request to <code>/api/projects</code>. The server checks my session, runs the INSERT query, and the project appears in the database. Go back to the Vercel Postgres dashboard, refresh, and there it is. Real data, created by real code."</div>
+
+    <div class="talk-point"><strong>Show the other operations:</strong> Quickly walk through the GET (read all projects), PUT (update a project), and DELETE (remove a project) routes. "Same pattern every time. Check the session. Validate the data. Run the SQL. Return the result. CRUD is a pattern. Once you learn the pattern, you can build anything."</div>
+  </div>
+
+  <!-- Notes for Slide 8 -->
+  <div class="notes-section" data-slide="7">
+    <h2>Companion Script</h2>
+    <h3>Breakpoint 5: Roles &amp; Moderation</h3>
+    <span class="time-est">~7 minutes</span>
+
+    <div class="talk-point"><strong>Keep it grounded:</strong> "Roles are just a string in a database column. That's it. There's no magic. The user table has a <code>role</code> column. It defaults to 'user'. If I go into the database and change someone's role to 'moderator', they can now approve projects and edit anyone's work. That's how access control works in every app."</div>
+
+    <div class="talk-point"><strong>Walk through the permission functions:</strong> "Look at these two functions. <code>canEditProject</code> returns true if you're a moderator OR if you're the author of the project. <code>canApprove</code> returns true only if you're a moderator. These are called every time someone tries to edit or approve something. If the check fails, the API returns a 403 // 'Forbidden.' Simple if-statements protecting your data."</div>
+
+    <div class="talk-point"><strong>The approval flow:</strong> "A user creates a project. It starts as 'draft'. It doesn't show up on the public site. A moderator logs in, sees the pending drafts in their dashboard, reviews them, and clicks 'Approve'. That changes the status from 'draft' to 'published'. Now it shows up on the site for everyone. If something's wrong, the mod can edit it or delete it."</div>
+
+    <p class="cue">Discussion</p>
+    <div class="talk-point">"Who should be a moderator for our site? How do you decide who gets that power? This is a real governance question. Every online community has it. Discord has mods. Reddit has mods. Subreddits have their own mods. Wikipedia has editors. How should we handle it?"</div>
+
+    <div class="talk-point"><strong>The bigger lesson:</strong> "Authorization is one of the most important concepts in software. Authentication is 'who are you?' Authorization is 'what are you allowed to do?' Every data breach you've ever heard of was an authorization failure. Someone accessed data they weren't supposed to. Understanding this makes you a better engineer and a more critical user of technology."</div>
+  </div>
+
+  <!-- Notes for Slide 9 -->
+  <div class="notes-section" data-slide="8">
+    <h2>Companion Script</h2>
+    <h3>Breakpoint 6: Deploy to Vercel</h3>
+    <span class="time-est">~5 minutes</span>
+
+    <div class="talk-point"><strong>The deploy process:</strong> "Deploying to Vercel is almost anticlimactic. You connect your GitHub repo. You set your environment variables in the Vercel dashboard. You push your code. Vercel automatically builds it, deploys it, and gives you a URL. Done. No server to configure. No Docker. No AWS console. Just push and it's live."</div>
+
+    <div class="talk-point"><strong>Environment variables in Vercel:</strong> Show the Vercel dashboard. "Same four env vars we had in <code>.env.local</code>. But now they live here, encrypted, on Vercel's servers. When our code runs, <code>process.env.GITHUB_ID</code> pulls from these values. The code is the same whether it's running locally or in production. Only the environment changes."</div>
+
+    <div class="talk-point"><strong>Security lesson:</strong> "This is why environment variables matter. Your code is public on GitHub. Anyone can read it. But the secrets // your GitHub OAuth credentials, your database connection string // those are only on Vercel's servers and your local machine. If someone forks your repo, they get the code but not the keys. They can't log in, they can't access your database. Separation of code and secrets. That's security 101."</div>
+
+    <p class="cue">Live deploy if time allows</p>
+    <div class="talk-point">If time allows, make a small change (like updating the tagline), commit, push, and watch Vercel's deploy logs in real time. "See? It's building right now. There's the URL. Click it. It's live. That change we just made is on the internet, available to anyone in the world, in under a minute."</div>
+  </div>
+
+  <!-- Notes for Slide 10 -->
+  <div class="notes-section" data-slide="9">
+    <h2>Companion Script</h2>
+    <h3>Slide 10: Ship It</h3>
+    <span class="time-est">~5 minutes</span>
+
+    <div class="talk-point"><strong>Recap what they learned:</strong> "In one hour, we walked through a full-stack app. OAuth // you know what happens when you click 'Sign in with Google' on any website. SQL // you know what a database table looks like and how to insert data. CRUD // you know the four operations behind every app. Authorization // you know how roles and permissions work. Environment variables // you know how to keep secrets out of code. Deployment // you know how code gets from your computer to the internet."</div>
+
+    <div class="talk-point"><strong>Reframe what 'full stack' means:</strong> "Full stack isn't a job title. It's a way of understanding software. When you use an app and something breaks, full-stack thinking means you can guess where the problem is. Is it the frontend? The API? The database? The deploy? You can think through the whole system. That's what we practiced today."</div>
+
+    <div class="talk-point"><strong>Tomorrow:</strong> "Thursday. Demo day. We polish what we built, make sure everything works, and present. If you want to create a project entry in the app tonight, go for it. Log in, add something. The moderators can approve it. By tomorrow we should have real projects in the real database on the real site."</div>
+
+    <p class="cue">Assign moderators</p>
+    <div class="talk-point">If you haven't already, now is the time to pick a few moderators. "I need two or three volunteers who want to be moderators. You'll be able to approve projects that other people submit. It's a real responsibility // you're deciding what goes on the site." Update their roles in the database live if possible.</div>
+
+    <p class="cue">Closing</p>
+    <div class="talk-point"><strong>Close strong:</strong> "You just read through a full-stack application and understood every layer. Four weeks ago, some of you had never written a line of code. Now you know how login systems work, how databases work, how APIs work, how deployment works. That's not nothing. That's everything. See you tomorrow."</div>
+  </div>
+
+</div>
+
+<!-- ===================== NAVIGATION BAR ===================== -->
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" onclick="prevSlide()" title="Previous slide">&larr;</button>
+  <div class="slide-dots" id="slideDots"></div>
+  <button class="nav-btn" onclick="nextSlide()" title="Next slide">&rarr;</button>
+  <span class="slide-counter" id="slideCounter"></span>
+</div>
+
+<!-- Keyboard hint -->
+<div class="keyboard-hint" id="keyboardHint">
+  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> navigate &nbsp;&middot;&nbsp; <kbd>N</kbd> notes &nbsp;&middot;&nbsp; <kbd>F</kbd> fullscreen
+</div>
+
+<!-- ===================== SCRIPT ===================== -->
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const notesSections = document.querySelectorAll('.notes-section');
+  const presentation = document.getElementById('presentation');
+  const notesPanel = document.getElementById('notesPanel');
+  const notesToggle = document.getElementById('notesToggle');
+  const navBar = document.getElementById('navBar');
+  const keyboardHint = document.getElementById('keyboardHint');
+  const progressBar = document.getElementById('progressBar');
+  const slideCounter = document.getElementById('slideCounter');
+  const slideDots = document.getElementById('slideDots');
+  let current = 0;
+  let notesOpen = false;
+
+  // Build dots
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.className = 'slide-dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    dot.title = `Slide ${i + 1}`;
+    slideDots.appendChild(dot);
+  });
+
+  function updateSlide() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    notesSections.forEach((n, i) => n.classList.toggle('active', i === current));
+    document.querySelectorAll('.slide-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    slideCounter.textContent = `${current + 1} / ${slides.length}`;
+    progressBar.style.width = `${((current + 1) / slides.length) * 100}%`;
+    notesPanel.scrollTop = 0;
+  }
+
+  function nextSlide() {
+    if (current < slides.length - 1) { current++; updateSlide(); }
+  }
+
+  function prevSlide() {
+    if (current > 0) { current--; updateSlide(); }
+  }
+
+  function goToSlide(i) {
+    current = i;
+    updateSlide();
+  }
+
+  function toggleNotes() {
+    notesOpen = !notesOpen;
+    notesPanel.classList.toggle('open', notesOpen);
+    notesToggle.classList.toggle('active', notesOpen);
+    presentation.classList.toggle('notes-open', notesOpen);
+    navBar.classList.toggle('notes-open', notesOpen);
+    if (keyboardHint) keyboardHint.classList.toggle('notes-open', notesOpen);
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+    else if (e.key === 'n' || e.key === 'N') { toggleNotes(); }
+    else if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+    else if (e.key === 'Home') { current = 0; updateSlide(); }
+    else if (e.key === 'End') { current = slides.length - 1; updateSlide(); }
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) nextSlide();
+      else prevSlide();
+    }
+  });
+
+  // Initialize
+  updateSlide();
+</script>
+
+</body>
+</html>
