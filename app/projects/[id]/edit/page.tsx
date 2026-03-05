@@ -37,7 +37,6 @@ export default async function EditProjectPage({ params }: Props) {
           tags: project.tags || [],
           demo_url: project.demo_url || "",
           repo_url: project.repo_url || "",
-          youtube_url: project.youtube_url || "",
           readme: project.readme || "",
         }}
       />

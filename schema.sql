@@ -18,7 +18,6 @@ CREATE TABLE projects (
   tags TEXT[] DEFAULT '{}',
   demo_url TEXT DEFAULT '',
   repo_url TEXT DEFAULT '',
-  youtube_url TEXT DEFAULT '',
   readme TEXT DEFAULT '',
   author_id INTEGER REFERENCES users(id),
   status TEXT NOT NULL DEFAULT 'draft',
@@ -26,8 +25,27 @@ CREATE TABLE projects (
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Migration: Add youtube_url to existing projects table
--- ALTER TABLE projects ADD COLUMN youtube_url TEXT DEFAULT '';
+CREATE TABLE videos (
+  id SERIAL PRIMARY KEY,
+  url TEXT NOT NULL,
+  title TEXT NOT NULL,
+  project_id INTEGER REFERENCES projects(id) ON DELETE CASCADE,
+  added_by INTEGER REFERENCES users(id),
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Migration: Add videos table to existing database
+-- CREATE TABLE videos (
+--   id SERIAL PRIMARY KEY,
+--   url TEXT NOT NULL,
+--   title TEXT NOT NULL,
+--   project_id INTEGER REFERENCES projects(id) ON DELETE CASCADE,
+--   added_by INTEGER REFERENCES users(id),
+--   created_at TIMESTAMP DEFAULT NOW()
+-- );
+
+-- Migration: Remove youtube_url from projects (if it was added)
+-- ALTER TABLE projects DROP COLUMN IF EXISTS youtube_url;
 
 -- Set VRNico as admin (run after first login)
 -- UPDATE users SET role = 'admin' WHERE username = 'VRNico';

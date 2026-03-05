@@ -3,6 +3,10 @@
 
 import { sql } from "@vercel/postgres"
 
+// ============================================
+// Projects
+// ============================================
+
 // Fetch all published projects (what everyone sees)
 export async function getPublishedProjects() {
   const result = await sql`
@@ -57,12 +61,11 @@ export async function createProject(data: {
   tags: string[]
   demo_url: string
   repo_url: string
-  youtube_url: string
   readme: string
   author_id: number
 }) {
   const result = await sql`
-    INSERT INTO projects (title, description, week, tags, demo_url, repo_url, youtube_url, readme, author_id, status)
+    INSERT INTO projects (title, description, week, tags, demo_url, repo_url, readme, author_id, status)
     VALUES (
       ${data.title},
       ${data.description},
@@ -70,7 +73,6 @@ export async function createProject(data: {
       ${data.tags as any},
       ${data.demo_url},
       ${data.repo_url},
-      ${data.youtube_url},
       ${data.readme},
       ${data.author_id},
       'draft'
@@ -90,12 +92,10 @@ export async function updateProject(
     tags?: string[]
     demo_url?: string
     repo_url?: string
-    youtube_url?: string
     readme?: string
     status?: string
   }
 ) {
-  // Build SET clause from provided fields
   const result = await sql`
     UPDATE projects SET
       title = COALESCE(${data.title ?? null}, title),
@@ -103,7 +103,6 @@ export async function updateProject(
       week = COALESCE(${data.week ?? null}, week),
       demo_url = COALESCE(${data.demo_url ?? null}, demo_url),
       repo_url = COALESCE(${data.repo_url ?? null}, repo_url),
-      youtube_url = COALESCE(${data.youtube_url ?? null}, youtube_url),
       readme = COALESCE(${data.readme ?? null}, readme),
       status = COALESCE(${data.status ?? null}, status),
       updated_at = NOW()
@@ -117,6 +116,81 @@ export async function updateProject(
 export async function deleteProject(id: number) {
   await sql`DELETE FROM projects WHERE id = ${id}`
 }
+
+// ============================================
+// Videos
+// ============================================
+
+// Get videos for a project
+export async function getProjectVideos(projectId: number) {
+  const result = await sql`
+    SELECT v.*, u.username
+    FROM videos v
+    JOIN users u ON v.added_by = u.id
+    WHERE v.project_id = ${projectId}
+    ORDER BY v.created_at ASC
+  `
+  return result.rows
+}
+
+// Get standalone videos (not linked to any project)
+export async function getStandaloneVideos() {
+  const result = await sql`
+    SELECT v.*, u.username
+    FROM videos v
+    JOIN users u ON v.added_by = u.id
+    WHERE v.project_id IS NULL
+    ORDER BY v.created_at DESC
+  `
+  return result.rows
+}
+
+// Get all videos
+export async function getAllVideos() {
+  const result = await sql`
+    SELECT v.*, u.username, p.title as project_title
+    FROM videos v
+    JOIN users u ON v.added_by = u.id
+    LEFT JOIN projects p ON v.project_id = p.id
+    ORDER BY v.created_at DESC
+  `
+  return result.rows
+}
+
+// Add a video
+export async function addVideo(data: {
+  url: string
+  title: string
+  project_id: number | null
+  added_by: number
+}) {
+  const result = await sql`
+    INSERT INTO videos (url, title, project_id, added_by)
+    VALUES (${data.url}, ${data.title}, ${data.project_id}, ${data.added_by})
+    RETURNING *
+  `
+  return result.rows[0]
+}
+
+// Delete a video
+export async function deleteVideo(id: number) {
+  await sql`DELETE FROM videos WHERE id = ${id}`
+}
+
+// Get a single video
+export async function getVideo(id: number) {
+  const result = await sql`
+    SELECT v.*, u.username
+    FROM videos v
+    JOIN users u ON v.added_by = u.id
+    WHERE v.id = ${id}
+  `
+  return result.rows[0] || null
+}
+
+// ============================================
+// Users
+// ============================================
 
 // Get all users (for admin panel)
 export async function getAllUsers() {

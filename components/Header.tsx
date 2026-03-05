@@ -34,6 +34,10 @@ export default function Header() {
             </svg>
           </a>
 
+          <Link href="/videos" className="nav-link">
+            Videos
+          </Link>
+
           {status === "loading" ? (
             <span className="auth-loading">...</span>
           ) : session ? (

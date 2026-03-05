@@ -49,15 +49,11 @@ export async function POST(req: NextRequest) {
   // Validate URLs // only allow http:// and https://
   const demoUrl = body.demo_url || ""
   const repoUrl = body.repo_url || ""
-  const youtubeUrl = body.youtube_url || ""
   if (demoUrl && !/^https?:\/\//i.test(demoUrl)) {
     return NextResponse.json({ error: "Demo URL must start with http:// or https://" }, { status: 400 })
   }
   if (repoUrl && !/^https?:\/\//i.test(repoUrl)) {
     return NextResponse.json({ error: "Repo URL must start with http:// or https://" }, { status: 400 })
-  }
-  if (youtubeUrl && !/^https?:\/\//i.test(youtubeUrl)) {
-    return NextResponse.json({ error: "YouTube URL must start with http:// or https://" }, { status: 400 })
   }
 
   const project = await createProject({
@@ -67,7 +63,6 @@ export async function POST(req: NextRequest) {
     tags: body.tags || [],
     demo_url: demoUrl,
     repo_url: repoUrl,
-    youtube_url: youtubeUrl,
     readme: body.readme || "",
     author_id: user.id,
   })

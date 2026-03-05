@@ -5,26 +5,14 @@ export const dynamic = "force-dynamic"
 
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import { getProject } from "@/lib/db"
-import { canEditProject, canApprove, canViewProject } from "@/lib/permissions"
+import { getProject, getProjectVideos } from "@/lib/db"
+import { canEditProject, canApprove, canViewProject, isModerator } from "@/lib/permissions"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import ProjectActions from "./ProjectActions"
+import ProjectVideos from "./ProjectVideos"
 
 type Props = { params: { id: string } }
-
-// Extract YouTube embed ID from various URL formats
-function getYouTubeEmbedUrl(url: string): string | null {
-  if (!url) return null
-  const patterns = [
-    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
-  ]
-  for (const pattern of patterns) {
-    const match = url.match(pattern)
-    if (match) return `https://www.youtube.com/embed/${match[1]}`
-  }
-  return null
-}
 
 export default async function ProjectDetailPage({ params }: Props) {
   const id = parseInt(params.id)
@@ -39,7 +27,8 @@ export default async function ProjectDetailPage({ params }: Props) {
 
   const showEdit = user && canEditProject(user, project)
   const showApprove = user && canApprove(user) && project.status === "draft"
-  const embedUrl = getYouTubeEmbedUrl(project.youtube_url || "")
+  const canManage = user && isModerator(user)
+  const videos = await getProjectVideos(id)
 
   return (
     <section className="project-detail">
@@ -72,19 +61,11 @@ export default async function ProjectDetailPage({ params }: Props) {
         />
       )}
 
-      {embedUrl && (
-        <div className="video-section">
-          <h3>Video</h3>
-          <div className="video-embed">
-            <iframe
-              src={embedUrl}
-              title={`${project.title} video`}
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-        </div>
-      )}
+      <ProjectVideos
+        projectId={project.id}
+        videos={videos as any}
+        canManage={!!canManage}
+      />
 
       <div className="detail-body">
         {project.readme ? (
@@ -124,15 +105,6 @@ export default async function ProjectDetailPage({ params }: Props) {
               <h4>Repository</h4>
               <a href={project.repo_url} target="_blank" rel="noopener noreferrer" className="sidebar-link">
                 View on GitHub &rarr;
-              </a>
-            </div>
-          )}
-
-          {project.youtube_url && /^https?:\/\//i.test(project.youtube_url) && (
-            <div className="sidebar-section">
-              <h4>Video</h4>
-              <a href={project.youtube_url} target="_blank" rel="noopener noreferrer" className="sidebar-link">
-                Watch on YouTube &rarr;
               </a>
             </div>
           )}
