@@ -5,8 +5,8 @@ import type { NextAuthOptions } from "next-auth"
 import GitHubProvider from "next-auth/providers/github"
 import { sql } from "@vercel/postgres"
 
-// The admin username // gets auto-promoted on login
-const ADMIN_USERNAME = "VRNico"
+// The admin username // gets auto-promoted on login (lowercase for comparison)
+const ADMIN_USERNAME = "vrnico"
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -21,8 +21,9 @@ export const authOptions: NextAuthOptions = {
       const ghProfile = profile as any
       const username = ghProfile.login
 
-      // Auto-assign admin role to VRNico
-      const role = username === ADMIN_USERNAME ? "admin" : "user"
+      // Auto-assign admin role to vrnico (case-insensitive)
+      const isAdmin = username.toLowerCase() === ADMIN_USERNAME
+      const role = isAdmin ? "admin" : "user"
 
       await sql`
         INSERT INTO users (github_id, username, avatar_url, role)
@@ -31,7 +32,7 @@ export const authOptions: NextAuthOptions = {
           username = EXCLUDED.username,
           avatar_url = EXCLUDED.avatar_url,
           role = CASE
-            WHEN EXCLUDED.username = ${ADMIN_USERNAME} THEN 'admin'
+            WHEN LOWER(EXCLUDED.username) = ${ADMIN_USERNAME} THEN 'admin'
             ELSE users.role
           END
       `
