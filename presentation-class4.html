@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learn to Code - Week 4 // Class 4 // Ship It Thursday</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-dark: #0a0a1a;
+    --accent-cyan: #00d4ff;
+    --accent-pink: #ff006e;
+    --accent-yellow: #ffd60a;
+    --accent-green: #00e676;
+    --accent-orange: #ff6b35;
+    --accent-red: #ff2d2d;
+    --accent-purple: #b388ff;
+    --text-primary: #f0f0f0;
+    --text-secondary: #a0a0b8;
+    --notes-bg: #111128;
+    --notes-width: 420px;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ===================== PRESENTATION CONTAINER ===================== */
+  .presentation {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    transition: width 0.3s ease;
+  }
+
+  .presentation.notes-open {
+    width: calc(100vw - var(--notes-width));
+  }
+
+  /* ===================== SLIDES ===================== */
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+  }
+
+  .slide.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 0;
+  }
+
+  .slide > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Slide background overlays */
+  .slide::before { background: rgba(10,10,26,0.88); }
+  .slide-1::before { background: linear-gradient(135deg, rgba(10,10,26,0.82), rgba(0,212,255,0.18)); }
+  .slide-2::before { background: linear-gradient(135deg, rgba(10,10,26,0.84), rgba(255,0,110,0.16)); }
+  .slide-3::before { background: linear-gradient(135deg, rgba(10,10,26,0.84), rgba(0,230,118,0.16)); }
+  .slide-4::before { background: linear-gradient(135deg, rgba(10,10,26,0.82), rgba(179,136,255,0.20)); }
+  .slide-5::before { background: linear-gradient(135deg, rgba(10,10,26,0.84), rgba(0,212,255,0.18)); }
+  .slide-6::before { background: linear-gradient(135deg, rgba(10,10,26,0.84), rgba(255,214,10,0.16)); }
+  .slide-7::before { background: linear-gradient(135deg, rgba(10,10,26,0.84), rgba(255,107,53,0.18)); }
+  .slide-8::before { background: linear-gradient(135deg, rgba(10,10,26,0.84), rgba(0,230,118,0.16)); }
+  .slide-9::before { background: linear-gradient(135deg, rgba(10,10,26,0.82), rgba(255,0,110,0.20)); }
+  .slide-10::before { background: linear-gradient(135deg, rgba(10,10,26,0.80), rgba(0,212,255,0.22)); }
+  .slide-11::before { background: linear-gradient(135deg, rgba(10,10,26,0.82), rgba(255,214,10,0.18)); }
+  .slide-12::before { background: linear-gradient(135deg, rgba(10,10,26,0.84), rgba(255,45,45,0.18)); }
+  .slide-13::before { background: linear-gradient(135deg, rgba(10,10,26,0.82), rgba(0,230,118,0.20)); }
+  .slide-14::before { background: linear-gradient(135deg, rgba(10,10,26,0.80), rgba(179,136,255,0.22)); }
+
+  /* ===================== CONTENT BOX ===================== */
+  .content-box {
+    background: rgba(10, 10, 26, 0.82);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 40px 48px;
+    max-width: 900px;
+    width: 100%;
+    backdrop-filter: blur(20px);
+  }
+
+  .slide-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--accent-cyan);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  h2 {
+    font-size: 2.8rem;
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    letter-spacing: -0.03em;
+  }
+
+  h3 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .subtitle {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 680px;
+  }
+
+  .highlight { color: var(--accent-cyan); }
+  .highlight-pink { color: var(--accent-pink); }
+  .highlight-green { color: var(--accent-green); }
+  .highlight-yellow { color: var(--accent-yellow); }
+  .highlight-orange { color: var(--accent-orange); }
+  .highlight-red { color: var(--accent-red); }
+  .highlight-purple { color: var(--accent-purple); }
+
+  /* ===================== LISTS ===================== */
+  .topic-list, .feature-list {
+    list-style: none;
+    margin-top: 20px;
+  }
+
+  .topic-list li, .feature-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 1.05rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    line-height: 1.5;
+  }
+
+  .topic-list li:last-child, .feature-list li:last-child {
+    border-bottom: none;
+  }
+
+  .list-icon {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: 1px;
+  }
+
+  /* ===================== CODE BLOCKS ===================== */
+  .code-block {
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 20px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    overflow-x: auto;
+    margin-top: 16px;
+    color: var(--text-secondary);
+  }
+
+  .code-block .keyword { color: var(--accent-pink); }
+  .code-block .string { color: var(--accent-green); }
+  .code-block .comment { color: #555; }
+  .code-block .fn { color: var(--accent-cyan); }
+  .code-block .number { color: var(--accent-orange); }
+
+  /* ===================== TWO-COLUMN LAYOUT ===================== */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 20px;
+  }
+
+  .col-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .col-card h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .col-card p, .col-card li {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+
+  .col-card ul {
+    list-style: none;
+    margin-top: 8px;
+  }
+
+  .col-card ul li {
+    padding: 4px 0;
+  }
+
+  .col-card ul li::before {
+    content: '// ';
+    color: var(--accent-cyan);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+  }
+
+  /* ===================== QUOTE BOX ===================== */
+  .quote-box {
+    background: rgba(255,255,255,0.03);
+    border-left: 3px solid var(--accent-cyan);
+    border-radius: 0 12px 12px 0;
+    padding: 20px 24px;
+    margin-top: 16px;
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .quote-box .source {
+    display: block;
+    margin-top: 8px;
+    font-style: normal;
+    font-size: 0.8rem;
+    color: var(--accent-cyan);
+    opacity: 0.7;
+  }
+
+  /* ===================== NEWS CARD ===================== */
+  .news-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .news-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+
+  .news-card h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  .news-card p {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  .news-card .news-source {
+    font-size: 0.7rem;
+    color: var(--accent-cyan);
+    margin-top: 6px;
+    opacity: 0.7;
+  }
+
+  .news-tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+
+  .tag-war { background: rgba(255,45,45,0.15); color: var(--accent-red); }
+  .tag-ai { background: rgba(179,136,255,0.15); color: var(--accent-purple); }
+  .tag-money { background: rgba(255,214,10,0.15); color: var(--accent-yellow); }
+  .tag-tech { background: rgba(0,212,255,0.15); color: var(--accent-cyan); }
+  .tag-power { background: rgba(255,107,53,0.15); color: var(--accent-orange); }
+
+  /* ===================== STAT ROW ===================== */
+  .stat-row {
+    display: flex;
+    gap: 24px;
+    margin-top: 20px;
+  }
+
+  .stat-box {
+    flex: 1;
+    text-align: center;
+    padding: 16px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ===================== PIPELINE DIAGRAM ===================== */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .pipeline-step {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-align: center;
+    min-width: 110px;
+  }
+
+  .pipeline-step .step-icon {
+    font-size: 1.4rem;
+    margin-bottom: 6px;
+  }
+
+  .pipeline-step .step-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .pipeline-arrow {
+    color: var(--accent-cyan);
+    font-size: 1.2rem;
+    opacity: 0.5;
+  }
+
+  /* ===================== NOTES PANEL ===================== */
+  .notes-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: var(--notes-width);
+    height: 100vh;
+    background: var(--notes-bg);
+    border-left: 1px solid rgba(255,255,255,0.08);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 100;
+    overflow-y: auto;
+    padding: 28px 24px;
+  }
+
+  .notes-panel.open {
+    transform: translateX(0);
+  }
+
+  .notes-panel h3 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent-cyan);
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .note-section {
+    display: none;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+
+  .note-section.active {
+    display: block;
+  }
+
+  .note-section p {
+    margin-bottom: 10px;
+  }
+
+  .note-section strong {
+    color: var(--text-primary);
+  }
+
+  .note-section ul {
+    margin: 8px 0 14px 18px;
+  }
+
+  .note-section ul li {
+    margin-bottom: 5px;
+  }
+
+  .note-section .note-key {
+    background: rgba(0,212,255,0.08);
+    border: 1px solid rgba(0,212,255,0.15);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 10px 0;
+    font-size: 0.82rem;
+  }
+
+  .note-section .note-key strong {
+    color: var(--accent-cyan);
+  }
+
+  .note-section .talking-point {
+    border-left: 2px solid var(--accent-pink);
+    padding-left: 12px;
+    margin: 10px 0;
+    font-style: italic;
+  }
+
+  .note-section .source-link {
+    font-size: 0.75rem;
+    color: var(--accent-cyan);
+    opacity: 0.6;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* ===================== NAV CONTROLS ===================== */
+  .nav-hint {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.2);
+    z-index: 50;
+    font-family: 'JetBrains Mono', monospace;
+    transition: right 0.3s ease;
+  }
+
+  .nav-hint.shifted {
+    right: calc(var(--notes-width) + 16px);
+  }
+
+  .slide-counter {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.2);
+    z-index: 50;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ===================== PROGRESS BAR ===================== */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--accent-cyan);
+    z-index: 200;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="presentation" id="presentation">
+
+  <!-- ========== SLIDE 1: TITLE ========== -->
+  <div class="slide slide-1 active" data-slide="1">
+    <div class="content-box">
+      <span class="slide-label">Week 4 // Class 4 // Thursday March 5, 2026</span>
+      <h2>Ship It <span class="highlight">Thursday</span></h2>
+      <p class="subtitle">
+        Organization, execution, CI/CD, and the art of getting things out the door.
+        Plus // the world is on fire and we should talk about it.
+      </p>
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="stat-number highlight">4</div>
+          <div class="stat-label">Weeks In</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number highlight-green">4</div>
+          <div class="stat-label">Demos Shipped</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number highlight-pink">1</div>
+          <div class="stat-label">Meta-Repo Built</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number highlight-yellow">&infin;</div>
+          <div class="stat-label">Things to Learn</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 2: ORGANIZATION MATTERS ========== -->
+  <div class="slide slide-2" data-slide="2">
+    <div class="content-box">
+      <span class="slide-label">Developer Discipline</span>
+      <h2>Organization <span class="highlight-pink">Matters</span></h2>
+      <p class="subtitle">The difference between a hobby project and a professional one isn't the code // it's the structure.</p>
+      <div class="two-col">
+        <div class="col-card">
+          <h4><span class="highlight-red">Chaos Mode</span></h4>
+          <ul>
+            <li>Files named "final_v2_REAL_final.js"</li>
+            <li>No README // no docs // no comments</li>
+            <li>Passwords committed to git</li>
+            <li>"It works on my machine"</li>
+            <li>Deploy by dragging files to FTP</li>
+          </ul>
+        </div>
+        <div class="col-card">
+          <h4><span class="highlight-green">Organized Mode</span></h4>
+          <ul>
+            <li>Clear folder structure // named logically</li>
+            <li>README explains what, why, and how</li>
+            <li>Environment variables for secrets</li>
+            <li>Reproducible builds with package.json</li>
+            <li>Automated deployment on push</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 3: THE ART OF SHIPPING ========== -->
+  <div class="slide slide-3" data-slide="3">
+    <div class="content-box">
+      <span class="slide-label">Execution</span>
+      <h2>The Art of <span class="highlight-green">Shipping</span></h2>
+      <p class="subtitle">A working demo beats a perfect plan every single time. You have to actually get things out the door.</p>
+      <ul class="topic-list">
+        <li>
+          <span class="list-icon" style="background:rgba(0,230,118,0.15);color:var(--accent-green);">1</span>
+          <div><strong>Done is better than perfect.</strong><br><span style="color:var(--text-secondary)">Ship a working v1. Iterate. The world doesn't wait for your "final touches."</span></div>
+        </li>
+        <li>
+          <span class="list-icon" style="background:rgba(0,212,255,0.15);color:var(--accent-cyan);">2</span>
+          <div><strong>Set a deadline and stick to it.</strong><br><span style="color:var(--text-secondary)">Our Thursday demo tradition // every week, something ships. No exceptions.</span></div>
+        </li>
+        <li>
+          <span class="list-icon" style="background:rgba(255,0,110,0.15);color:var(--accent-pink);">3</span>
+          <div><strong>Reduce scope, not quality.</strong><br><span style="color:var(--text-secondary)">If you can't finish everything, cut features // don't cut corners on what you keep.</span></div>
+        </li>
+        <li>
+          <span class="list-icon" style="background:rgba(255,214,10,0.15);color:var(--accent-yellow);">4</span>
+          <div><strong>Show your work.</strong><br><span style="color:var(--text-secondary)">Deploy it. Let people see it. Get feedback. That's how you learn and grow as a developer.</span></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 4: MVP ARCHITECTURE ========== -->
+  <div class="slide slide-4" data-slide="4">
+    <div class="content-box">
+      <span class="slide-label">Architecture</span>
+      <h2><span class="highlight-purple">MVP</span> Architecture</h2>
+      <p class="subtitle">Minimum Viable Product // build the smallest thing that proves your idea works.</p>
+      <div class="two-col">
+        <div class="col-card">
+          <h4><span class="highlight-purple">What MVP Really Means</span></h4>
+          <p>It's not "the worst version of your product." It's the <strong>smallest version that solves the core problem.</strong></p>
+          <ul>
+            <li>Identify the ONE thing your app must do</li>
+            <li>Build only that feature first</li>
+            <li>Skip login, skip settings, skip dark mode</li>
+            <li>Ship it // get real user feedback</li>
+            <li>Then iterate based on actual data</li>
+          </ul>
+        </div>
+        <div class="col-card">
+          <h4><span class="highlight-cyan">Last Thursday as MVP</span></h4>
+          <p>Our project archive started as a static HTML page. Then:</p>
+          <ul>
+            <li>Week 1: Static HTML + CSS + JS</li>
+            <li>Week 2: Data in JavaScript files</li>
+            <li>Week 3: Full-stack with database + auth</li>
+            <li>Week 4: Admin roles + YouTube + deploy</li>
+            <li>Each week adds one meaningful layer</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 5: WHEN TO AUTOMATE ========== -->
+  <div class="slide slide-5" data-slide="5">
+    <div class="content-box">
+      <span class="slide-label">Automation</span>
+      <h2>When to <span class="highlight">Automate</span> // When to Skip</h2>
+      <p class="subtitle">Not everything needs a script. Know when manual work is actually faster.</p>
+      <div class="two-col">
+        <div class="col-card">
+          <h4><span class="highlight-green">Automate This</span></h4>
+          <ul>
+            <li>Deployment // git push should deploy</li>
+            <li>Testing // run tests before every commit</li>
+            <li>Code formatting // Prettier, ESLint</li>
+            <li>Environment setup // Docker, .env templates</li>
+            <li>Repetitive data transforms</li>
+            <li>Anything you do more than 3 times</li>
+          </ul>
+        </div>
+        <div class="col-card">
+          <h4><span class="highlight-red">Don't Automate This</span></h4>
+          <ul>
+            <li>One-off tasks // just do them manually</li>
+            <li>Complex decisions // humans are better</li>
+            <li>Code review // AI assists, humans decide</li>
+            <li>User communication // keep it personal</li>
+            <li>Anything you haven't done manually first</li>
+            <li>Things that change every time</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote-box">
+        "Automating something you don't understand just means your mistakes happen faster."
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 6: CI/CD PIPELINE ========== -->
+  <div class="slide slide-6" data-slide="6">
+    <div class="content-box">
+      <span class="slide-label">CI/CD</span>
+      <h2>The <span class="highlight-yellow">Pipeline</span></h2>
+      <p class="subtitle">Continuous Integration / Continuous Deployment // code goes from your laptop to production automatically.</p>
+      <div class="pipeline">
+        <div class="pipeline-step">
+          <div class="step-icon">&#128187;</div>
+          <div class="step-label">Write Code</div>
+        </div>
+        <span class="pipeline-arrow">&rarr;</span>
+        <div class="pipeline-step">
+          <div class="step-icon">&#128230;</div>
+          <div class="step-label">Git Push</div>
+        </div>
+        <span class="pipeline-arrow">&rarr;</span>
+        <div class="pipeline-step">
+          <div class="step-icon">&#9889;</div>
+          <div class="step-label">Auto Build</div>
+        </div>
+        <span class="pipeline-arrow">&rarr;</span>
+        <div class="pipeline-step">
+          <div class="step-icon">&#9989;</div>
+          <div class="step-label">Run Tests</div>
+        </div>
+        <span class="pipeline-arrow">&rarr;</span>
+        <div class="pipeline-step">
+          <div class="step-icon">&#128640;</div>
+          <div class="step-label">Deploy</div>
+        </div>
+      </div>
+      <div class="code-block">
+<span class="comment">// Our CI/CD // Vercel does this automatically</span>
+<span class="comment">// 1. Push to GitHub</span>
+git push origin main
+
+<span class="comment">// 2. Vercel detects the push (webhook)</span>
+<span class="comment">// 3. Runs `npm run build`</span>
+<span class="comment">// 4. Deploys to CDN</span>
+<span class="comment">// 5. Live in ~60 seconds</span>
+<span class="comment">// No servers to manage. No FTP. No SSH.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 7: WHAT WE SHIPPED TODAY ========== -->
+  <div class="slide slide-7" data-slide="7">
+    <div class="content-box">
+      <span class="slide-label">Today's Deployment</span>
+      <h2>What We <span class="highlight-orange">Shipped</span> Today</h2>
+      <p class="subtitle">New features deployed to last-thursday.vercel.app right now.</p>
+      <ul class="feature-list">
+        <li>
+          <span class="list-icon" style="background:rgba(255,214,10,0.15);color:var(--accent-yellow);">&#9733;</span>
+          <div><strong>Admin Role System</strong><br><span style="color:var(--text-secondary)">VRNico is auto-assigned as admin. Admins can promote users to moderators via /admin panel.</span></div>
+        </li>
+        <li>
+          <span class="list-icon" style="background:rgba(0,230,118,0.15);color:var(--accent-green);">&#9654;</span>
+          <div><strong>YouTube Video Integration</strong><br><span style="color:var(--text-secondary)">Projects can now link class recordings and demo videos. Embedded player on project detail pages.</span></div>
+        </li>
+        <li>
+          <span class="list-icon" style="background:rgba(179,136,255,0.15);color:var(--accent-purple);">&#128279;</span>
+          <div><strong>GitHub Link</strong><br><span style="color:var(--text-secondary)">Header and footer link to the repo. Open source // anyone can view the code.</span></div>
+        </li>
+        <li>
+          <span class="list-icon" style="background:rgba(0,212,255,0.15);color:var(--accent-cyan);">&#128736;</span>
+          <div><strong>Three-Tier Permissions</strong><br><span style="color:var(--text-secondary)">User &rarr; Moderator &rarr; Admin. Each level unlocks more capabilities.</span></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 8: CURRENT EVENTS - AI & TECH ========== -->
+  <div class="slide slide-8" data-slide="8">
+    <div class="content-box" style="max-width:960px;">
+      <span class="slide-label">Current Events // March 5, 2026</span>
+      <h2>The <span class="highlight-green">Tech</span> World Today</h2>
+      <p class="subtitle">What's happening in AI and tech // and what it means for people who build things.</p>
+      <div class="news-grid">
+        <div class="news-card">
+          <span class="news-tag tag-ai">AI</span>
+          <h4>AI Chatbots Got Taxes Wrong by $2,000</h4>
+          <p>NerdWallet tested ChatGPT, Gemini, and Perplexity on basic tax questions. They gave wrong deductions, made up credits, and gave different answers to the same question asked twice.</p>
+          <span class="news-source">Source: NerdWallet, March 2026</span>
+        </div>
+        <div class="news-card">
+          <span class="news-tag tag-tech">TECH</span>
+          <h4>"The Text Box Is a Failed Interface"</h4>
+          <p>Designers argue the blank chat prompt // used by every AI tool // is the worst possible UX. 60% of users never send a first message. No guidance, no affordances, no flow state.</p>
+          <span class="news-source">Source: Wattenberger, Neoground, NN/g</span>
+        </div>
+        <div class="news-card">
+          <span class="news-tag tag-ai">AI</span>
+          <h4>Microsoft Ships 15B Model That Decides When to Think</h4>
+          <p>Phi-4-reasoning-vision switches between chain-of-thought reasoning and direct answers on its own. Open-weight. 15 billion parameters. Running on a single GPU.</p>
+          <span class="news-source">Source: Microsoft Research, March 2026</span>
+        </div>
+        <div class="news-card">
+          <span class="news-tag tag-tech">TECH</span>
+          <h4>BYD Battery: 0 to 97% in 9 Minutes</h4>
+          <p>BYD's new Blade Battery charges at 600kW, even at -20&deg;C. 777km range. Deploying 4,000+ ultra-fast chargers across China. The combustion engine has an expiration date.</p>
+          <span class="news-source">Source: Yahoo Finance, Electronic Design</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 9: CURRENT EVENTS - POWER & MONEY ========== -->
+  <div class="slide slide-9" data-slide="9">
+    <div class="content-box" style="max-width:960px;">
+      <span class="slide-label">Current Events // Who Has the Power?</span>
+      <h2>Follow the <span class="highlight-pink">Money</span></h2>
+      <p class="subtitle">The billionaire class isn't just building tech // they're building control systems.</p>
+      <div class="news-grid">
+        <div class="news-card">
+          <span class="news-tag tag-money">WEALTH</span>
+          <h4>Musk Hits $792 Billion // 2.6x Bezos</h4>
+          <p>One person's net worth is now larger than the GDP of most countries. Tesla stock doubled. SpaceX is preparing a world-record IPO. There are now 4,020 billionaires worldwide // up 578 from last year.</p>
+          <span class="news-source">Source: Hurun Global Rich List 2026</span>
+        </div>
+        <div class="news-card">
+          <span class="news-tag tag-money">DEALS</span>
+          <h4>OpenAI Pivots: $50B Amazon, Pentagon Deals</h4>
+          <p>ChatGPT checkout abandoned. OpenAI signed $50B Amazon deal and a Pentagon contract, sparking #CancelChatGPT. Sam Altman said he "shouldn't have rushed" the military deal.</p>
+          <span class="news-source">Source: Axios, Windows Central, TechRadar</span>
+        </div>
+        <div class="news-card">
+          <span class="news-tag tag-power">POWER</span>
+          <h4>Epic CEO Silenced Until 2032</h4>
+          <p>Tim Sweeney must publicly endorse Google's app store as "procompetitive" and is barred from criticism for 6 years. The loudest critic of big tech monopolies was bought with a settlement.</p>
+          <span class="news-source">Source: The Verge, Engadget</span>
+        </div>
+        <div class="news-card">
+          <span class="news-tag tag-power">POWER</span>
+          <h4>Palantir CEO: "Nationalize Us or We'll Take All the Jobs"</h4>
+          <p>"If Silicon Valley believes we are going to take away everyone's white-collar job...and you're gonna screw the military // if you don't think that's gonna lead to nationalization...you're [wrong]."</p>
+          <span class="news-source">Source: Benzinga, Fortune // Alex Karp at a16z Summit</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 10: CURRENT EVENTS - WAR & CONSEQUENCES ========== -->
+  <div class="slide slide-10" data-slide="10">
+    <div class="content-box" style="max-width:960px;">
+      <span class="slide-label">Current Events // War in the Code</span>
+      <h2>War, <span class="highlight">AI</span>, and Who <span class="highlight-red">Pays</span></h2>
+      <p class="subtitle">When the tools you build get used for things you didn't sign up for.</p>
+      <div class="news-grid">
+        <div class="news-card">
+          <span class="news-tag tag-war">WAR</span>
+          <h4>Pentagon Used Claude AI in Iran Strikes</h4>
+          <p>Palantir's Maven system // powered by Anthropic's Claude // selected targets in Operation Epic Fury. This happened hours after Trump banned Anthropic from government. The military kept using it anyway.</p>
+          <span class="news-source">Source: WaPo, CBS News, Democracy Now</span>
+        </div>
+        <div class="news-card">
+          <span class="news-tag tag-war">WAR</span>
+          <h4>Gulf States Running Out of Interceptors</h4>
+          <p>"We have shot several years' worth of production in the last few days." UAE intercepted 814 of 871 incoming missiles. Iran's strategy: drain expensive defenses with cheap persistent attacks.</p>
+          <span class="news-source">Source: Breaking Defense, The War Zone</span>
+        </div>
+        <div class="news-card">
+          <span class="news-tag tag-war">WAR</span>
+          <h4>Anthropic CEO Negotiates with Pentagon</h4>
+          <p>Dario Amodei is trying to "de-escalate." The Pentagon demanded Anthropic delete restrictions on mass surveillance. Amodei: "We believe that crossing those lines is contrary to American values."</p>
+          <span class="news-source">Source: Bloomberg, CBS News, CNBC</span>
+        </div>
+        <div class="news-card">
+          <span class="news-tag tag-war">WAR</span>
+          <h4>Qatar Helium Shutdown Threatens Chip Supply</h4>
+          <p>Iranian strikes on Qatar's LNG facilities halted 30% of global helium capacity. China gets 90% of its chip-fab helium from Qatar. The Strait of Hormuz is effectively closed.</p>
+          <span class="news-source">Source: TFTC, Gasworld, Reuters</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 11: WHO OWNS THE TOOLS? ========== -->
+  <div class="slide slide-11" data-slide="11">
+    <div class="content-box">
+      <span class="slide-label">Critical Perspective</span>
+      <h2>Who <span class="highlight-yellow">Owns</span> the Tools?</h2>
+      <p class="subtitle">As developers, we need to think about who controls the platforms we build on // and who profits.</p>
+      <ul class="topic-list">
+        <li>
+          <span class="list-icon" style="background:rgba(255,0,110,0.15);color:var(--accent-pink);">!</span>
+          <div><strong>Musk is worth $792B.</strong> The median American worker makes $59,228/year. It would take 13.3 million years of work to earn what Musk "has." Nobody works 13 million times harder than you.
+          <span class="source-link">Source: Hurun Global Rich List 2026 // Bureau of Labor Statistics</span></div>
+        </li>
+        <li>
+          <span class="list-icon" style="background:rgba(255,214,10,0.15);color:var(--accent-yellow);">!</span>
+          <div><strong>The tariff ruling:</strong> A judge ordered $130B+ in tariff refunds after the Supreme Court ruled they were unconstitutional. The president taxed the country without Congressional approval // and got caught.
+          <span class="source-link">Source: NBC News, Fortune // Court of International Trade</span></div>
+        </li>
+        <li>
+          <span class="list-icon" style="background:rgba(255,45,45,0.15);color:var(--accent-red);">!</span>
+          <div><strong>Prediction markets let insiders bet on war.</strong> Six suspected accounts made $1.2M betting on Iran strikes before they happened. Sen. Murphy: "Insane this is legal."
+          <span class="source-link">Source: CNBC, Benzinga // Bubblemaps blockchain analysis</span></div>
+        </li>
+        <li>
+          <span class="list-icon" style="background:rgba(179,136,255,0.15);color:var(--accent-purple);">!</span>
+          <div><strong>200+ troops told Iran war is "God's divine plan."</strong> Commanders told soldiers Trump was "anointed by Jesus to light the signal fire in Iran to cause Armageddon."
+          <span class="source-link">Source: Newsweek, Anadolu Agency // Military Religious Freedom Foundation</span></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 12: THE DEVELOPER'S RESPONSIBILITY ========== -->
+  <div class="slide slide-12" data-slide="12">
+    <div class="content-box">
+      <span class="slide-label">Ethics in Code</span>
+      <h2>The Developer's <span class="highlight-red">Responsibility</span></h2>
+      <p class="subtitle">You are not neutral. The code you write has consequences. Think about them.</p>
+      <div class="two-col">
+        <div class="col-card">
+          <h4><span class="highlight-red">What's Happening</span></h4>
+          <ul>
+            <li>AI tools built for search now select bombing targets</li>
+            <li>Claude AI used in war the same day it was banned</li>
+            <li>Tech CEOs warn about job loss // while profiting from it</li>
+            <li>Prediction markets let Wall Street bet on death</li>
+            <li>BlackRock writes down $25M loans to zero // you pay</li>
+          </ul>
+        </div>
+        <div class="col-card">
+          <h4><span class="highlight-green">What You Can Do</span></h4>
+          <ul>
+            <li>Build open source // don't lock knowledge behind paywalls</li>
+            <li>Choose who you work for // not every paycheck is worth it</li>
+            <li>Understand the supply chain of your tools</li>
+            <li>Learn to code so you don't depend on tech oligarchs</li>
+            <li>Question the default // who profits from "how things are"?</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quote-box">
+        "I actually think that it is one reason that he must be removed from office. Because if the Epstein files have such a hold on President Trump and this administration, that they are willing to plunge us and risk world war in order to save themselves politically, that is the definition of someone who cannot make objective decisions for the American people."
+        <span class="source">// Rep. Alexandria Ocasio-Cortez, March 2026 (The Wrap, Boston Globe)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 13: NEXT WEEK PREVIEW ========== -->
+  <div class="slide slide-13" data-slide="13">
+    <div class="content-box">
+      <span class="slide-label">Looking Ahead</span>
+      <h2>Week <span class="highlight-green">5</span> Preview</h2>
+      <p class="subtitle">Next week we level up. Start thinking about what you want to build.</p>
+      <div class="two-col">
+        <div class="col-card">
+          <h4><span class="highlight-cyan">Possible Directions</span></h4>
+          <ul>
+            <li>Real-time features // WebSockets, live updates</li>
+            <li>API integrations // pulling in external data</li>
+            <li>Mobile-first design // responsive from the start</li>
+            <li>Testing // writing tests for your code</li>
+            <li>Your own project idea // pitch it Monday</li>
+          </ul>
+        </div>
+        <div class="col-card">
+          <h4><span class="highlight-yellow">Homework</span></h4>
+          <ul>
+            <li>Sign up on Last Thursday // submit a project</li>
+            <li>Think about what problem you want to solve</li>
+            <li>Research one API you'd like to integrate</li>
+            <li>Come Monday with an idea to pitch</li>
+            <li>Review this week's code on GitHub</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SLIDE 14: WRAP UP ========== -->
+  <div class="slide slide-14" data-slide="14">
+    <div class="content-box" style="text-align:center;">
+      <span class="slide-label">That's a Wrap</span>
+      <h2>Keep <span class="highlight-purple">Shipping</span></h2>
+      <p class="subtitle" style="margin:0 auto;">
+        Four weeks in. Four demos shipped. You're developers now.<br><br>
+        See you Monday.
+      </p>
+      <div class="stat-row" style="margin-top:32px;">
+        <div class="stat-box">
+          <div class="stat-number highlight-cyan">&#128187;</div>
+          <div class="stat-label"><a href="https://last-thursday.vercel.app" target="_blank" style="color:var(--accent-cyan);text-decoration:none;">last-thursday.vercel.app</a></div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-number highlight-purple">&#128230;</div>
+          <div class="stat-label"><a href="https://github.com/VRNico/last-thursday" target="_blank" style="color:var(--accent-purple);text-decoration:none;">GitHub Repo</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ========== NOTES PANEL ========== -->
+<div class="notes-panel" id="notesPanel">
+  <h3>Companion Notes</h3>
+
+  <!-- SLIDE 1 NOTES -->
+  <div class="note-section" data-notes="1">
+    <p><strong>Welcome to Ship It Thursday!</strong></p>
+    <p>This is our fourth demo day. Every Thursday we deploy something that works. That's the tradition. That's the discipline.</p>
+    <p>Today's agenda:</p>
+    <ul>
+      <li>Developer organization // why structure matters</li>
+      <li>The art of shipping // getting things done</li>
+      <li>MVP architecture // build small, ship fast</li>
+      <li>When to automate // and when not to</li>
+      <li>CI/CD // how code gets from your laptop to production</li>
+      <li>What we shipped today on Last Thursday</li>
+      <li>Current events // tech, money, war, power</li>
+      <li>Next week preview</li>
+    </ul>
+    <div class="note-key">
+      <strong>Key theme:</strong> Execution beats perfection. Structure enables speed. And always think about who benefits from the tools you build.
+    </div>
+  </div>
+
+  <!-- SLIDE 2 NOTES -->
+  <div class="note-section" data-notes="2">
+    <p><strong>Organization is the unsexy skill that separates professionals from hobbyists.</strong></p>
+    <p>Walk through each point on both sides. Everyone has been in "chaos mode" // the point isn't shame, it's recognition.</p>
+    <div class="talking-point">Ask the class: "Who has a project right now with a file called something like 'untitled2.js'?" Get some laughs, then pivot to why it matters.</div>
+    <p>Real-world consequences of disorganization:</p>
+    <ul>
+      <li>You can't onboard teammates if nobody understands the project</li>
+      <li>You can't deploy reliably if your process is manual</li>
+      <li>You leak secrets (passwords in git) if you don't use env vars</li>
+      <li>You waste hours every week finding things</li>
+    </ul>
+    <p>The Last Thursday project demonstrates organized mode:</p>
+    <ul>
+      <li>Clear folder structure: app/, components/, lib/</li>
+      <li>README.md explains everything</li>
+      <li>.env.local.example documents required variables</li>
+      <li>schema.sql documents the database</li>
+      <li>Git history tells the story of the project</li>
+    </ul>
+  </div>
+
+  <!-- SLIDE 3 NOTES -->
+  <div class="note-section" data-notes="3">
+    <p><strong>Shipping is a muscle. You have to train it.</strong></p>
+    <p>The Thursday demo tradition is intentional. It forces you to make decisions about what's "done enough" to show.</p>
+    <div class="talking-point">"Perfection is the enemy of progress. If you wait until something is perfect, you'll never ship. I've seen developers spend months on projects nobody ever sees."</div>
+    <p>Walk through each point:</p>
+    <ul>
+      <li><strong>Done > Perfect:</strong> Version 1 of Facebook was built in a dorm room. It was ugly. It worked. The rest is history.</li>
+      <li><strong>Deadlines:</strong> Without them, scope creeps forever. Our Thursday rule means you MUST cut somewhere.</li>
+      <li><strong>Reduce scope, not quality:</strong> Better to ship 3 polished features than 10 buggy ones. Cut the feature list, not the testing.</li>
+      <li><strong>Show your work:</strong> Deployed code gets feedback. Code on your laptop gets nothing.</li>
+    </ul>
+    <div class="note-key">
+      <strong>Real example:</strong> Today's deployment added admin roles, YouTube integration, and GitHub links. That's scope we chose. We didn't add search, filtering, comments, or user profiles // those are future iterations.
+    </div>
+  </div>
+
+  <!-- SLIDE 4 NOTES -->
+  <div class="note-section" data-notes="4">
+    <p><strong>MVP is the most misunderstood concept in tech.</strong></p>
+    <p>People think MVP means "the worst version." It actually means "the smallest version that proves the idea."</p>
+    <div class="talking-point">"Your MVP should answer ONE question: does anyone care? If nobody uses the simplest version, adding features won't help."</div>
+    <p>Walk through the Last Thursday evolution:</p>
+    <ul>
+      <li><strong>Static HTML:</strong> Just shows projects. No login, no database. Proves the concept works.</li>
+      <li><strong>JavaScript data:</strong> Projects stored in JS files. Still no backend. Proves we need structured data.</li>
+      <li><strong>Full-stack:</strong> Database, auth, CRUD. Now multiple people can add projects. Proves collaboration works.</li>
+      <li><strong>Roles + Media:</strong> Admin panel, YouTube, GitHub links. Now it's a real platform.</li>
+    </ul>
+    <p>Each iteration answered a specific question before moving to the next. That's MVP done right.</p>
+    <div class="note-key">
+      <strong>Anti-pattern:</strong> Don't build a login system before you know if anyone wants your product. Don't add payments before you have users. Don't optimize before you have traffic.
+    </div>
+  </div>
+
+  <!-- SLIDE 5 NOTES -->
+  <div class="note-section" data-notes="5">
+    <p><strong>The automation trap: spending 3 hours automating a task that takes 5 minutes.</strong></p>
+    <div class="talking-point">"There's a famous XKCD comic about this. If a task takes 5 minutes and you do it weekly, you'd need to automate it in less than 4 hours to break even over 5 years. Most people spend a weekend on it."</div>
+    <p>The rule of thumb:</p>
+    <ul>
+      <li><strong>Automate deployment</strong> // you'll do it hundreds of times</li>
+      <li><strong>Don't automate</strong> a one-time database migration // just run the SQL</li>
+      <li><strong>Automate tests</strong> // catching bugs before users do is worth it</li>
+      <li><strong>Don't automate</strong> something you haven't done manually at least 3 times // you don't understand the edge cases yet</li>
+    </ul>
+    <p>The quote on this slide is key: if you automate something you don't understand, you just make mistakes faster and harder to debug.</p>
+  </div>
+
+  <!-- SLIDE 6 NOTES -->
+  <div class="note-section" data-notes="6">
+    <p><strong>CI/CD is the backbone of modern software development.</strong></p>
+    <p>Walk through the pipeline diagram step by step:</p>
+    <ul>
+      <li><strong>Write Code:</strong> On your laptop, in your editor. This is where creativity happens.</li>
+      <li><strong>Git Push:</strong> You push to GitHub. This triggers everything else.</li>
+      <li><strong>Auto Build:</strong> Vercel (or GitHub Actions, or Jenkins, etc.) pulls your code and runs the build command.</li>
+      <li><strong>Run Tests:</strong> Automated tests catch bugs before they reach production. If tests fail, deployment stops.</li>
+      <li><strong>Deploy:</strong> If everything passes, your code goes live. Users see the new version.</li>
+    </ul>
+    <div class="note-key">
+      <strong>Our setup:</strong> We use Vercel's built-in CI/CD. Push to main = auto deploy. No servers, no SSH, no FTP. It's free for small projects. This is the modern standard.
+    </div>
+    <p>Mention alternatives: GitHub Actions (free, flexible), Jenkins (self-hosted), GitLab CI, CircleCI. The concept is the same everywhere.</p>
+    <div class="talking-point">"The old way: FTP into a server, overwrite files, pray nothing breaks. The new way: git push, get a coffee, it's live."</div>
+  </div>
+
+  <!-- SLIDE 7 NOTES -->
+  <div class="note-section" data-notes="7">
+    <p><strong>Walk through today's actual deployment live.</strong></p>
+    <p>Open last-thursday.vercel.app and show each feature:</p>
+    <ul>
+      <li><strong>Admin role:</strong> Log in as VRNico, show the "Admin" link in the header, navigate to /admin. Show how to promote/demote users.</li>
+      <li><strong>YouTube integration:</strong> Show the YouTube URL field when creating/editing a project. Show the embedded video player on a project detail page.</li>
+      <li><strong>GitHub link:</strong> Point out the GitHub icon in the header and the link in the footer. Click it to show the actual repo.</li>
+      <li><strong>Three-tier permissions:</strong> Explain user &rarr; moderator &rarr; admin. Users can submit projects. Moderators can approve/edit any project. Admins can do everything plus manage user roles.</li>
+    </ul>
+    <div class="note-key">
+      <strong>Teaching moment:</strong> All of these features were added today and deployed automatically via CI/CD. That's the pipeline in action. Write code, push, it's live.
+    </div>
+  </div>
+
+  <!-- SLIDE 8 NOTES -->
+  <div class="note-section" data-notes="8">
+    <p><strong>Tech news with context. Don't just report // analyze.</strong></p>
+
+    <p><strong>AI Tax Errors:</strong> NerdWallet tested ChatGPT, Gemini, and Perplexity. Key failures: wrong standard deduction (off by $3,000), invented an EV credit for a Tesla that didn't qualify, told users to file in the wrong state, and gave different answers to the same question asked twice. This matters because millions of people are trusting AI with their finances.</p>
+    <span class="source-link">Source: nerdwallet.com/taxes/studies/doing-taxes-with-ai</span>
+
+    <p><strong>The Blank Text Box:</strong> Amelia Wattenberger's critique resonates. Good tools show you how to use them. AI chatbots give you a blank box and say "figure it out." 60% of users never send a first message. The richest companies in history can't design a good interface.</p>
+    <span class="source-link">Source: wattenberger.com/thoughts/boo-chatbots</span>
+
+    <p><strong>Microsoft's Phi-4:</strong> A 15B parameter model that decides on its own whether to "think hard" or give a quick answer. Open-weight // meaning anyone can download and run it. This is the democratization side of AI // open models vs closed platforms.</p>
+    <span class="source-link">Source: Microsoft Research, HuggingFace</span>
+
+    <p><strong>BYD Battery:</strong> 600kW charging. 97% in 9 minutes. 777km range. Chinese company. While American tech billionaires fight over AI contracts, China is solving actual infrastructure problems. BYD outsold Tesla globally in Q4 2025.</p>
+    <span class="source-link">Source: Yahoo Finance, Electronic Design</span>
+  </div>
+
+  <!-- SLIDE 9 NOTES -->
+  <div class="note-section" data-notes="9">
+    <p><strong>This slide is about power concentration. Go deeper.</strong></p>
+
+    <p><strong>Musk $792B:</strong> This number is obscene. Break it down: $792 billion is more than the GDP of Saudi Arabia ($1.1T in 2024 // Musk is approaching the output of entire petrostates). His wealth went up 89% in one year. That's $374 billion in gains // while the average American's savings rate is 3.4%. The system is working exactly as designed // for the people who designed it.</p>
+    <span class="source-link">Source: Hurun Global Rich List 2026, SCMP</span>
+
+    <p><strong>OpenAI's pivot:</strong> ChatGPT's consumer shopping feature failed because users didn't trust it. So OpenAI pivoted to selling to Amazon ($50B) and the Pentagon. When consumer ethics don't pay, they sell to the military. The #CancelChatGPT movement grew specifically because of the Pentagon deal.</p>
+    <span class="source-link">Source: Axios, Windows Central, TechRadar</span>
+
+    <p><strong>Epic/Google:</strong> Tim Sweeney spent years fighting Google's monopoly in court. He won // and then signed an agreement to publicly praise Google and never criticize them again until 2032. That's what "settling" looks like when a monopoly writes the terms. The most effective critic was silenced through commerce.</p>
+    <span class="source-link">Source: The Verge, Engadget, Hacker News</span>
+
+    <p><strong>Palantir/Karp:</strong> Alex Karp said out loud what Silicon Valley thinks quietly: they will replace white-collar jobs with AI, and if they also refuse to work with the military, the public will demand nationalization. He's saying the quiet part loud // tech sees itself as above democratic accountability, and the only reason to cooperate with government is to avoid being taken over by it.</p>
+    <span class="source-link">Source: Benzinga, Fortune // a16z American Dynamism Summit</span>
+  </div>
+
+  <!-- SLIDE 10 NOTES -->
+  <div class="note-section" data-notes="10">
+    <p><strong>This is the hardest slide. Take your time with it.</strong></p>
+
+    <p><strong>Claude in Iran:</strong> The AI you're learning about in this class // Claude, made by Anthropic // was used by the Pentagon to select bombing targets in Iran. This happened hours after Trump banned Anthropic from government use. The military kept using it because they didn't have a replacement ready. Palantir's Maven system integrates Claude for intelligence analysis and target selection. Over 1,000 targets were struck in the first 24 hours of Operation Epic Fury.</p>
+    <span class="source-link">Source: Washington Post, CBS News, Democracy Now, The Nation</span>
+
+    <p><strong>Interceptor drain:</strong> Iran's strategy is brilliant and terrifying. Instead of one massive attack, they're sending waves of cheap drones and missiles over days. Each interceptor missile costs $1-3 million. Each drone costs $20,000-50,000. The math doesn't work for the defenders. A US official said: "We have shot several years' worth of production in the last few days."</p>
+    <span class="source-link">Source: Breaking Defense, The War Zone, Carnegie</span>
+
+    <p><strong>Anthropic negotiations:</strong> Dario Amodei drew a line at mass surveillance of Americans. The Pentagon told him to delete that restriction. He refused. The Defense Department designated Anthropic a "supply chain risk" // a label usually reserved for enemy nations. Now Amodei is back at the table trying to "de-escalate." The question: can a tech CEO resist the military-industrial complex?</p>
+    <span class="source-link">Source: Bloomberg, CBS News, CNBC, Engadget</span>
+
+    <p><strong>Qatar helium:</strong> Chips need helium for fabrication. Qatar provides 30% of global helium. Iran's strikes shut down Qatar's LNG facilities // and helium is a byproduct of LNG. China gets 90% of its chip-fab helium from Qatar. The war is disrupting the global semiconductor supply chain through a connection most people don't even know exists.</p>
+    <span class="source-link">Source: TFTC, Gasworld, Reuters</span>
+
+    <div class="talking-point">"The tools we build don't exist in a vacuum. Claude was built to help people write code and answer questions. It's now selecting bombing targets. What you build will be used in ways you don't expect. Think about that."</div>
+  </div>
+
+  <!-- SLIDE 11 NOTES -->
+  <div class="note-section" data-notes="11">
+    <p><strong>This is the anti-capitalist analysis slide. Be direct.</strong></p>
+
+    <p><strong>Wealth inequality math:</strong> Musk's $792B divided by median US wage ($59,228) = 13,371,622 years of labor. Nobody generates that much value through work. This wealth comes from ownership // of stock, of companies, of other people's labor. The system extracts value from workers and concentrates it at the top. That's not a bug. That's the design.</p>
+
+    <p><strong>Tariff ruling:</strong> The Supreme Court struck down Trump's tariffs as unconstitutional // the president was taxing Americans without Congressional authorization. A judge ordered $130B+ in refunds. The Penn Wharton Budget Model estimates total refund liability could reach $175B. American consumers and businesses paid these illegal taxes for months before the courts acted.</p>
+    <span class="source-link">Source: NBC News, Fortune, Penn Wharton Budget Model</span>
+
+    <p><strong>Prediction markets:</strong> Polymarket let people bet on whether the US would bomb Iran. Six accounts made $1.2M with insider knowledge. Senator Murphy: "Insane this is legal." These markets turn human suffering into financial instruments. Wall Street is literally gambling on whether people will die.</p>
+    <span class="source-link">Source: CNBC, Benzinga, Bubblemaps</span>
+
+    <p><strong>Religious extremism in the military:</strong> 200+ service members reported to the MRFF that commanders told them the Iran war is "God's divine plan" and Trump was "anointed by Jesus to cause Armageddon." These are the people controlling weapons. This violates the Uniform Code of Military Justice and the Constitution's establishment clause.</p>
+    <span class="source-link">Source: Newsweek, Anadolu Agency, IBTimes</span>
+
+    <div class="talking-point">"Learning to code isn't just about getting a job. It's about understanding the systems that control your life. When you understand how technology works, you can see through the marketing. You can build alternatives. You can refuse to participate in systems that exploit people."</div>
+  </div>
+
+  <!-- SLIDE 12 NOTES -->
+  <div class="note-section" data-notes="12">
+    <p><strong>The developer's responsibility isn't about guilt // it's about awareness.</strong></p>
+
+    <p>Walk through the "What's Happening" column:</p>
+    <ul>
+      <li>Anthropic built Claude for helpful AI assistance. It's now integrated into military targeting systems via Palantir's Maven. The developer's intent doesn't determine the use.</li>
+      <li>OpenAI pivoted from consumer shopping to military contracts when the money was better. Profit motive trumps stated values.</li>
+      <li>Alex Karp openly admits AI will eliminate white-collar jobs while Palantir's stock soars. The people building these tools profit from the displacement they cause.</li>
+      <li>Prediction markets on Polymarket let traders profit from advance knowledge of military strikes. Technology enabled a new form of war profiteering.</li>
+      <li>BlackRock wrote down a $25M private loan to zero // just 3 months after marking it "at par." When billionaire investments fail, they write them off. When your investments fail, you lose your savings. The system has different rules for different people.</li>
+    </ul>
+
+    <p>Walk through the "What You Can Do" column:</p>
+    <ul>
+      <li><strong>Open source:</strong> We put Last Thursday on GitHub. Anyone can learn from it. Knowledge shouldn't be paywalled.</li>
+      <li><strong>Choose employers wisely:</strong> Not every tech job is worth taking. Ask what the company does, not just what they pay.</li>
+      <li><strong>Supply chain awareness:</strong> Know where your tools come from. AWS, Vercel, GitHub // who owns them? What else do they do?</li>
+      <li><strong>Self-sufficiency:</strong> Learning to code means you're not dependent on platforms controlled by billionaires. You can build your own.</li>
+      <li><strong>Question defaults:</strong> "That's just how it works" is never a good enough answer. Ask who set it up that way and who profits.</li>
+    </ul>
+
+    <p><strong>AOC quote context:</strong> She argued that every time damaging information about Epstein connections surfaces, there's a military escalation that dominates the news cycle. Whether you agree with her theory or not, the question is worth asking: who benefits from this war? Rep. Thomas Massie (R-KY) made a similar point: "Bombing a country on the other side of the globe won't make the Epstein files go away."</p>
+    <span class="source-link">Source: The Wrap, Boston Globe, Meaww</span>
+
+    <p>Khalaf Al Habtoor, UAE billionaire, wrote an open letter to Trump: "Who gave you the authority to drag our region into a war with Iran? And on what basis did you make this dangerous decision?" Even the Gulf's ultra-wealthy are breaking ranks.</p>
+    <span class="source-link">Source: Ummid.com, Bloomberg, Foreign Policy</span>
+  </div>
+
+  <!-- SLIDE 13 NOTES -->
+  <div class="note-section" data-notes="13">
+    <p><strong>Plant the seed for next week. Get them thinking over the weekend.</strong></p>
+    <p>Possible directions for Week 5:</p>
+    <ul>
+      <li><strong>Real-time:</strong> WebSockets, Server-Sent Events. Good for chat apps, live dashboards, collaborative tools.</li>
+      <li><strong>API integrations:</strong> Weather, news, music, GitHub, any public API. Build something that pulls live data.</li>
+      <li><strong>Mobile-first:</strong> Design for phones first, desktop second. Most web traffic is mobile now.</li>
+      <li><strong>Testing:</strong> Write actual tests for your code. Jest, Vitest, Playwright. Professional development practice.</li>
+      <li><strong>Student projects:</strong> Anyone can pitch their own idea on Monday. We'll vote on the best ones.</li>
+    </ul>
+    <p>Homework is light but important:</p>
+    <ul>
+      <li>Sign up on Last Thursday and submit a project entry for their work</li>
+      <li>Think about a real problem they want to solve with code</li>
+      <li>Browse public APIs (public-apis.io, rapidapi.com) for inspiration</li>
+      <li>Come Monday ready to pitch</li>
+    </ul>
+    <div class="talking-point">"The best project is one that solves a problem you actually have. Don't build a to-do app // build something you'll actually use."</div>
+  </div>
+
+  <!-- SLIDE 14 NOTES -->
+  <div class="note-section" data-notes="14">
+    <p><strong>Keep it short and strong.</strong></p>
+    <p>Recap the key themes:</p>
+    <ul>
+      <li>Organization enables speed // structure your projects properly</li>
+      <li>Ship every Thursday // done beats perfect</li>
+      <li>MVP first, features later // prove the concept</li>
+      <li>CI/CD is the modern standard // push to deploy</li>
+      <li>Think about who owns your tools // and who profits</li>
+      <li>You're developers now // act like it</li>
+    </ul>
+    <p>Show the live links: last-thursday.vercel.app and the GitHub repo.</p>
+    <p>Remind them: Monday is pitch day. Come with an idea.</p>
+    <div class="note-key">
+      <strong>End on a high note.</strong> Four weeks of consistent shipping. They've gone from zero to deploying full-stack applications. That's real. That matters. See you Monday.
+    </div>
+  </div>
+</div>
+
+<!-- ========== NAV ========== -->
+<div class="slide-counter" id="slideCounter">1 / 14</div>
+<div class="nav-hint" id="navHint">&larr; &rarr; navigate // N = notes</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const notes = document.querySelectorAll('.note-section');
+  const panel = document.getElementById('notesPanel');
+  const presentation = document.getElementById('presentation');
+  const counter = document.getElementById('slideCounter');
+  const hint = document.getElementById('navHint');
+  const progressBar = document.getElementById('progressBar');
+  let current = 0;
+  let notesOpen = false;
+
+  function showSlide(index) {
+    slides.forEach(s => s.classList.remove('active'));
+    notes.forEach(n => n.classList.remove('active'));
+    slides[index].classList.add('active');
+    const noteEl = document.querySelector(`[data-notes="${index + 1}"]`);
+    if (noteEl) noteEl.classList.add('active');
+    counter.textContent = `${index + 1} / ${slides.length}`;
+    progressBar.style.width = `${((index + 1) / slides.length) * 100}%`;
+  }
+
+  function toggleNotes() {
+    notesOpen = !notesOpen;
+    panel.classList.toggle('open', notesOpen);
+    presentation.classList.toggle('notes-open', notesOpen);
+    hint.classList.toggle('shifted', notesOpen);
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault();
+      if (current < slides.length - 1) { current++; showSlide(current); }
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (current > 0) { current--; showSlide(current); }
+    } else if (e.key === 'n' || e.key === 'N') {
+      toggleNotes();
+    } else if (e.key === 'Home') {
+      current = 0; showSlide(current);
+    } else if (e.key === 'End') {
+      current = slides.length - 1; showSlide(current);
+    }
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0 && current < slides.length - 1) { current++; showSlide(current); }
+      else if (diff < 0 && current > 0) { current--; showSlide(current); }
+    }
+  });
+
+  showSlide(0);
+</script>
+
+</body>
+</html>

@@ -6,15 +6,16 @@ export const dynamic = "force-dynamic"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { getPublishedProjects, getAllProjects, getUserDrafts } from "@/lib/db"
+import { isModerator } from "@/lib/permissions"
 import ProjectCard from "@/components/ProjectCard"
 
 export default async function HomePage() {
   const session = await getServerSession(authOptions)
   const user = (session?.user as any) || null
 
-  // Moderators see all projects. Everyone else sees published + their own drafts.
+  // Moderators and admins see all projects. Everyone else sees published + their own drafts.
   let projects
-  if (user?.role === "moderator") {
+  if (user && isModerator(user)) {
     projects = await getAllProjects()
   } else if (user) {
     const published = await getPublishedProjects()

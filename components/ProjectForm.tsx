@@ -16,6 +16,7 @@ type Props = {
     tags: string[]
     demo_url: string
     repo_url: string
+    youtube_url: string
     readme: string
   }
 }
@@ -31,6 +32,7 @@ export default function ProjectForm({ mode, initial }: Props) {
   const [tagsStr, setTagsStr] = useState((initial?.tags || []).join(", "))
   const [demoUrl, setDemoUrl] = useState(initial?.demo_url || "")
   const [repoUrl, setRepoUrl] = useState(initial?.repo_url || "")
+  const [youtubeUrl, setYoutubeUrl] = useState(initial?.youtube_url || "")
   const [readme, setReadme] = useState(initial?.readme || "")
 
   async function handleSubmit(e: React.FormEvent) {
@@ -43,7 +45,16 @@ export default function ProjectForm({ mode, initial }: Props) {
       .map((t) => t.trim())
       .filter(Boolean)
 
-    const body = { title, description, week, tags, demo_url: demoUrl, repo_url: repoUrl, readme }
+    const body = {
+      title,
+      description,
+      week,
+      tags,
+      demo_url: demoUrl,
+      repo_url: repoUrl,
+      youtube_url: youtubeUrl,
+      readme,
+    }
 
     const url = mode === "create" ? "/api/projects" : `/api/projects/${initial?.id}`
     const method = mode === "create" ? "POST" : "PUT"
@@ -142,6 +153,18 @@ export default function ProjectForm({ mode, initial }: Props) {
             placeholder="https://github.com/..."
           />
         </div>
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="youtube_url">YouTube Video</label>
+        <input
+          id="youtube_url"
+          type="url"
+          value={youtubeUrl}
+          onChange={(e) => setYoutubeUrl(e.target.value)}
+          placeholder="https://www.youtube.com/watch?v=..."
+        />
+        <span className="form-hint">Link to a class recording or demo video</span>
       </div>
 
       <div className="form-group">

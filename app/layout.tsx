@@ -18,7 +18,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main>{children}</main>
           <footer className="site-footer">
-            <p>Multiverse Schools &middot; Learn to Code &middot; 2026</p>
+            <p>
+              Multiverse Schools &middot; Learn to Code &middot; 2026 &middot;{" "}
+              <a
+                href="https://github.com/VRNico/last-thursday"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                GitHub
+              </a>
+            </p>
           </footer>
         </Providers>
       </body>

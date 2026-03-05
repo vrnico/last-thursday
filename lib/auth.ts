@@ -5,6 +5,9 @@ import type { NextAuthOptions } from "next-auth"
 import GitHubProvider from "next-auth/providers/github"
 import { sql } from "@vercel/postgres"
 
+// The admin username // gets auto-promoted on login
+const ADMIN_USERNAME = "VRNico"
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GitHubProvider({
@@ -16,12 +19,21 @@ export const authOptions: NextAuthOptions = {
     // When a user signs in, upsert them in our database
     async signIn({ user, profile }) {
       const ghProfile = profile as any
+      const username = ghProfile.login
+
+      // Auto-assign admin role to VRNico
+      const role = username === ADMIN_USERNAME ? "admin" : "user"
+
       await sql`
-        INSERT INTO users (github_id, username, avatar_url)
-        VALUES (${String(ghProfile.id)}, ${ghProfile.login}, ${user.image})
+        INSERT INTO users (github_id, username, avatar_url, role)
+        VALUES (${String(ghProfile.id)}, ${username}, ${user.image}, ${role})
         ON CONFLICT (github_id) DO UPDATE SET
           username = EXCLUDED.username,
-          avatar_url = EXCLUDED.avatar_url
+          avatar_url = EXCLUDED.avatar_url,
+          role = CASE
+            WHEN EXCLUDED.username = ${ADMIN_USERNAME} THEN 'admin'
+            ELSE users.role
+          END
       `
       return true
     },

@@ -6,15 +6,16 @@ import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 import { getPublishedProjects, getAllProjects, getUserDrafts, createProject } from "@/lib/db"
+import { isModerator } from "@/lib/permissions"
 
 // READ // get all projects
 export async function GET() {
   const session = await getServerSession(authOptions)
   const user = (session?.user as any) || null
 
-  // Moderators see everything. Regular users see published + their own drafts.
+  // Moderators and admins see everything. Regular users see published + their own drafts.
   let projects
-  if (user?.role === "moderator") {
+  if (user && isModerator(user)) {
     projects = await getAllProjects()
   } else {
     const published = await getPublishedProjects()
@@ -48,11 +49,15 @@ export async function POST(req: NextRequest) {
   // Validate URLs // only allow http:// and https://
   const demoUrl = body.demo_url || ""
   const repoUrl = body.repo_url || ""
+  const youtubeUrl = body.youtube_url || ""
   if (demoUrl && !/^https?:\/\//i.test(demoUrl)) {
     return NextResponse.json({ error: "Demo URL must start with http:// or https://" }, { status: 400 })
   }
   if (repoUrl && !/^https?:\/\//i.test(repoUrl)) {
     return NextResponse.json({ error: "Repo URL must start with http:// or https://" }, { status: 400 })
+  }
+  if (youtubeUrl && !/^https?:\/\//i.test(youtubeUrl)) {
+    return NextResponse.json({ error: "YouTube URL must start with http:// or https://" }, { status: 400 })
   }
 
   const project = await createProject({
@@ -62,6 +67,7 @@ export async function POST(req: NextRequest) {
     tags: body.tags || [],
     demo_url: demoUrl,
     repo_url: repoUrl,
+    youtube_url: youtubeUrl,
     readme: body.readme || "",
     author_id: user.id,
   })

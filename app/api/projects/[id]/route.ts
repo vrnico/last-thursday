@@ -67,10 +67,13 @@ export async function PUT(req: NextRequest, { params }: Params) {
   if (body.repo_url && !/^https?:\/\//i.test(body.repo_url)) {
     return NextResponse.json({ error: "Repo URL must start with http:// or https://" }, { status: 400 })
   }
+  if (body.youtube_url && !/^https?:\/\//i.test(body.youtube_url)) {
+    return NextResponse.json({ error: "YouTube URL must start with http:// or https://" }, { status: 400 })
+  }
 
   // Whitelist allowed fields
   const allowed: any = {}
-  for (const key of ["title", "description", "week", "tags", "demo_url", "repo_url", "readme", "status"]) {
+  for (const key of ["title", "description", "week", "tags", "demo_url", "repo_url", "youtube_url", "readme", "status"]) {
     if (body[key] !== undefined) allowed[key] = body[key]
   }
 

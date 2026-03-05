@@ -57,11 +57,12 @@ export async function createProject(data: {
   tags: string[]
   demo_url: string
   repo_url: string
+  youtube_url: string
   readme: string
   author_id: number
 }) {
   const result = await sql`
-    INSERT INTO projects (title, description, week, tags, demo_url, repo_url, readme, author_id, status)
+    INSERT INTO projects (title, description, week, tags, demo_url, repo_url, youtube_url, readme, author_id, status)
     VALUES (
       ${data.title},
       ${data.description},
@@ -69,6 +70,7 @@ export async function createProject(data: {
       ${data.tags as any},
       ${data.demo_url},
       ${data.repo_url},
+      ${data.youtube_url},
       ${data.readme},
       ${data.author_id},
       'draft'
@@ -88,6 +90,7 @@ export async function updateProject(
     tags?: string[]
     demo_url?: string
     repo_url?: string
+    youtube_url?: string
     readme?: string
     status?: string
   }
@@ -100,6 +103,7 @@ export async function updateProject(
       week = COALESCE(${data.week ?? null}, week),
       demo_url = COALESCE(${data.demo_url ?? null}, demo_url),
       repo_url = COALESCE(${data.repo_url ?? null}, repo_url),
+      youtube_url = COALESCE(${data.youtube_url ?? null}, youtube_url),
       readme = COALESCE(${data.readme ?? null}, readme),
       status = COALESCE(${data.status ?? null}, status),
       updated_at = NOW()
@@ -112,4 +116,24 @@ export async function updateProject(
 // Delete a project
 export async function deleteProject(id: number) {
   await sql`DELETE FROM projects WHERE id = ${id}`
+}
+
+// Get all users (for admin panel)
+export async function getAllUsers() {
+  const result = await sql`
+    SELECT id, username, avatar_url, role, created_at
+    FROM users
+    ORDER BY created_at ASC
+  `
+  return result.rows
+}
+
+// Update a user's role
+export async function updateUserRole(userId: number, role: string) {
+  const result = await sql`
+    UPDATE users SET role = ${role}
+    WHERE id = ${userId}
+    RETURNING id, username, avatar_url, role
+  `
+  return result.rows[0]
 }

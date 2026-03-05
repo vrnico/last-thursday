@@ -18,9 +18,16 @@ CREATE TABLE projects (
   tags TEXT[] DEFAULT '{}',
   demo_url TEXT DEFAULT '',
   repo_url TEXT DEFAULT '',
+  youtube_url TEXT DEFAULT '',
   readme TEXT DEFAULT '',
   author_id INTEGER REFERENCES users(id),
   status TEXT NOT NULL DEFAULT 'draft',
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
+
+-- Migration: Add youtube_url to existing projects table
+-- ALTER TABLE projects ADD COLUMN youtube_url TEXT DEFAULT '';
+
+-- Set VRNico as admin (run after first login)
+-- UPDATE users SET role = 'admin' WHERE username = 'VRNico';
