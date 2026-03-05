@@ -640,34 +640,35 @@
   <div class="slide slide-5" data-slide="5">
     <div class="content-box">
       <span class="slide-label">Automation</span>
-      <h2>When to <span class="highlight">Automate</span> // When to Skip</h2>
-      <p class="subtitle">Not everything needs a script. Know when manual work is actually faster.</p>
+      <h2>The <span class="highlight">Automation</span> Quest</h2>
+      <p class="subtitle">Think of every task as a quest in a game. Some quests you grind. Some you build a bot for. Here's how to decide.</p>
       <div class="two-col">
         <div class="col-card">
-          <h4><span class="highlight-green">Automate This</span></h4>
+          <h4><span class="highlight-cyan">The Pencil & Paper Test</span></h4>
+          <p style="color:var(--text-secondary);font-size:0.88rem;">Imagine you're alone in a room with just paper and a pencil. Infinite time. No computer. <strong style="color:var(--text-primary)">How would you do this task?</strong></p>
           <ul>
-            <li>Deployment // git push should deploy</li>
-            <li>Testing // run tests before every commit</li>
-            <li>Code formatting // Prettier, ESLint</li>
-            <li>Environment setup // Docker, .env templates</li>
-            <li>Repetitive data transforms</li>
-            <li>Anything you do more than 3 times</li>
+            <li>Can you write the steps as a checklist?</li>
+            <li>Does every run follow the same steps?</li>
+            <li>Does it need a human to approve or judge?</li>
+            <li>Could you teach a stranger to do it?</li>
           </ul>
+          <p style="color:var(--text-secondary);font-size:0.82rem;margin-top:8px;">If yes to all // it's <strong style="color:var(--accent-green)">deterministic</strong>. A machine can do it.</p>
+          <p style="color:var(--text-secondary);font-size:0.72rem;margin-top:4px;">// Shoutout Teja for this framework</p>
         </div>
         <div class="col-card">
-          <h4><span class="highlight-red">Don't Automate This</span></h4>
+          <h4><span class="highlight-yellow">The Quest Slot System</span></h4>
+          <p style="color:var(--text-secondary);font-size:0.88rem;">Think of your tasks as inventory slots in a game. Each slot costs <strong style="color:var(--text-primary)">energy</strong> to maintain.</p>
           <ul>
-            <li>One-off tasks // just do them manually</li>
-            <li>Complex decisions // humans are better</li>
-            <li>Code review // AI assists, humans decide</li>
-            <li>User communication // keep it personal</li>
-            <li>Anything you haven't done manually first</li>
-            <li>Things that change every time</li>
+            <li><span style="color:var(--accent-green);">1-5 times</span> // Just do it. Manual is fine.</li>
+            <li><span style="color:var(--accent-yellow);">5-25 times</span> // Write a checklist or snippet.</li>
+            <li><span style="color:var(--accent-orange);">25+ times</span> // Automate it. Free up the slot.</li>
+            <li><span style="color:var(--accent-red);">Needs approval?</span> // Never fully automate.</li>
           </ul>
+          <p style="color:var(--text-secondary);font-size:0.82rem;margin-top:8px;">Every automation <strong style="color:var(--accent-green)">frees a slot</strong> for creative work.</p>
         </div>
       </div>
       <div class="quote-box">
-        "Automating something you don't understand just means your mistakes happen faster."
+        "Automation isn't about being lazy // it's about freeing up quest slots for the boss fights that actually matter."
       </div>
     </div>
   </div>
@@ -785,7 +786,7 @@ git push origin main
     <div class="content-box" style="max-width:960px;">
       <span class="slide-label">Current Events // Who Has the Power?</span>
       <h2>Follow the <span class="highlight-pink">Money</span></h2>
-      <p class="subtitle">The billionaire class isn't just building tech // they're building control systems.</p>
+      <p class="subtitle">The billionaire class builds control systems.</p>
       <div class="news-grid">
         <div class="news-card">
           <span class="news-tag tag-money">WEALTH</span>
@@ -1054,16 +1055,40 @@ git push origin main
 
   <!-- SLIDE 5 NOTES -->
   <div class="note-section" data-notes="5">
-    <p><strong>The automation trap: spending 3 hours automating a task that takes 5 minutes.</strong></p>
-    <div class="talking-point">"There's a famous XKCD comic about this. If a task takes 5 minutes and you do it weekly, you'd need to automate it in less than 4 hours to break even over 5 years. Most people spend a weekend on it."</div>
-    <p>The rule of thumb:</p>
+    <p><strong>This slide reframes automation as a game design problem. Two frameworks from class.</strong></p>
+
+    <p><strong>Framework 1 // The Pencil & Paper Test (credit: Teja)</strong></p>
+    <p>Teja described this perfectly: before you automate anything, imagine you're alone in a room with just paper and a pencil and infinite time. Write out every step. If you can produce a deterministic checklist // same input, same steps, same output every time // then a machine can do it. If at any point you write "use your judgment" or "it depends" // that's a human task.</p>
+    <div class="talking-point">"If you can't explain it to a piece of paper, you can't explain it to a computer. Automation only works on deterministic tasks // tasks where the steps never change."</div>
+    <p>Walk through examples with the class:</p>
     <ul>
-      <li><strong>Automate deployment</strong> // you'll do it hundreds of times</li>
-      <li><strong>Don't automate</strong> a one-time database migration // just run the SQL</li>
-      <li><strong>Automate tests</strong> // catching bugs before users do is worth it</li>
-      <li><strong>Don't automate</strong> something you haven't done manually at least 3 times // you don't understand the edge cases yet</li>
+      <li><strong>Deterministic:</strong> "Resize every image in this folder to 800px wide" // same steps every time, no judgment. Automate it.</li>
+      <li><strong>Deterministic:</strong> "Run tests and deploy if they pass" // clear pass/fail, no ambiguity. Automate it.</li>
+      <li><strong>NOT deterministic:</strong> "Review this pull request" // requires understanding context, intent, quality. Human task.</li>
+      <li><strong>NOT deterministic:</strong> "Write a good commit message" // requires understanding WHY the change was made. Human task.</li>
     </ul>
-    <p>The quote on this slide is key: if you automate something you don't understand, you just make mistakes faster and harder to debug.</p>
+
+    <p><strong>Framework 2 // The Quest Slot System</strong></p>
+    <p>Think of your brain like an RPG inventory. You only have so many quest slots. Every repetitive task you're doing manually is taking up a slot that could be used for creative work // the boss fights.</p>
+    <div class="note-key">
+      <strong>The tier system:</strong><br>
+      <strong>1-5 times:</strong> Just do it by hand. The automation would take longer than all 5 runs combined.<br>
+      <strong>5-25 times:</strong> Write a checklist, a code snippet, or a shell alias. Semi-automated. You still run it, but it's faster.<br>
+      <strong>25+ times:</strong> Full automation. Script it, schedule it, CI/CD it. This task should never require your attention again.<br>
+      <strong>Needs human approval?</strong> Never fully automate. Build a tool that does 90% of the work and presents options to a human. The human presses the button.
+    </div>
+
+    <div class="talking-point">"Every task you automate frees up a quest slot. If you're spending all your slots on grinding // deploying manually, formatting code, copying files // you have no slots left for the creative work that actually matters. Automate the grind so you can fight the bosses."</div>
+
+    <p><strong>Real examples from our class:</strong></p>
+    <ul>
+      <li><strong>Deployment</strong> // we do this 25+ times per project. Vercel automates it. Quest slot freed.</li>
+      <li><strong>Code formatting</strong> // Prettier runs on save. You never think about tabs vs spaces again. Quest slot freed.</li>
+      <li><strong>Database migration</strong> // we did this once today. Just ran the SQL. No automation needed.</li>
+      <li><strong>Approving projects</strong> // requires a moderator's judgment. Semi-automated: the system shows drafts, human clicks "Approve."</li>
+    </ul>
+
+    <p>The bottom quote ties it together: automation isn't about being lazy. Lazy is doing the same manual task for the 50th time. Automation is being strategic about where you spend your limited energy.</p>
   </div>
 
   <!-- SLIDE 6 NOTES -->
@@ -1167,7 +1192,7 @@ git push origin main
     <p><strong>Religious extremism in the military:</strong> 200+ service members reported to the MRFF that commanders told them the Iran war is "God's divine plan" and Trump was "anointed by Jesus to cause Armageddon." These are the people controlling weapons. This violates the Uniform Code of Military Justice and the Constitution's establishment clause.</p>
     <span class="source-link">Source: Newsweek, Anadolu Agency, IBTimes</span>
 
-    <div class="talking-point">"Learning to code isn't just about getting a job. It's about understanding the systems that control your life. When you understand how technology works, you can see through the marketing. You can build alternatives. You can refuse to participate in systems that exploit people."</div>
+    <div class="talking-point">"Learning to code goes beyond getting a job. It's about understanding the systems that control your life. When you understand how technology works, you can see through the marketing. You can build alternatives. You can refuse to participate in systems that exploit people."</div>
   </div>
 
   <!-- SLIDE 12 NOTES -->
